@@ -227,3 +227,146 @@ const PrayerTimes = () => {
 };
 
 export default PrayerTimes;
+            import React, { useState, useEffect, useRef } from 'react';
+import { Play, Pause, SkipForward, SkipBack, Bookmark, BookmarkCheck, Volume2 } from 'lucide-react';
+
+const QuranAudioPlayer = ({ surahNumber, ayahs }) => {
+  const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playAll, setPlayAll] = useState(false);
+  const [bookmarks, setBookmarks] = useState([]);
+  const [selectedQari, setSelectedQari] = useState('ar.alafasy'); // Standard
+  const audioRef = useRef(new Audio());
+
+  // Deine gewünschten Qaris (IDs für die API)
+  const qaris = [
+    { id: 'ar.abdulsamad', name: 'Abdul Samad' },
+    { id: 'ar.as-sudais', name: 'Abdurrahman As-Sudais' },
+    { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy' }
+  ];
+
+  // Lesezeichen aus LocalStorage laden
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('quran-bookmarks') || '[]');
+    setBookmarks(saved);
+  }, []);
+
+  // Audio-Logik: Wenn ein Vers endet und "Play All" aktiv ist
+  useEffect(() => {
+    const audio = audioRef.current;
+    
+    const handleEnded = () => {
+      if (playAll && currentAyahIndex < ayahs.length - 1) {
+        setCurrentAyahIndex(prev => prev + 1);
+      } else {
+        setIsPlaying(false);
+      }
+    };
+
+    audio.addEventListener('ended', handleEnded);
+    return () => audio.removeEventListener('ended', handleEnded);
+  }, [playAll, currentAyahIndex, ayahs]);
+
+  // Wenn sich der Index oder Qari ändert, neues Audio laden
+  useEffect(() => {
+    if (isPlaying) {
+      const ayahNumber = ayahs[currentAyahIndex].number;
+      audioRef.current.src = `https://cdn.islamic.network/quran/audio/128/${selectedQari}/${ayahNumber}.mp3`;
+      audioRef.current.play();
+    }
+  }, [currentAyahIndex, selectedQari, isPlaying]);
+
+  const togglePlay = (index = currentAyahIndex, all = false) => {
+    setPlayAll(all);
+    if (index === currentAyahIndex && isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      setCurrentAyahIndex(index);
+      setIsPlaying(true);
+    }
+  };
+
+  const toggleBookmark = (ayah) => {
+    let newBookmarks;
+    const isBookmarked = bookmarks.some(b => b.number === ayah.number);
+    
+    if (isBookmarked) {
+      newBookmarks = bookmarks.filter(b => b.number !== ayah.number);
+    } else {
+      newBookmarks = [...bookmarks, { ...ayah, surahNumber }];
+    }
+    
+    setBookmarks(newBookmarks);
+    localStorage.setItem('quran-bookmarks', JSON.stringify(newBookmarks));
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Player Steuerung */}
+      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur p-4 border-b flex flex-wrap items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-4">
+          <select 
+            className="p-2 border rounded-lg text-sm bg-slate-50"
+            value={selectedQari}
+            onChange={(e) => setSelectedQari(e.target.value)}
+          >
+            {qaris.map(q => <option key={q.id} value={q.id}>{q.name}</option>)}
+          </select>
+          
+          <button 
+            onClick={() => togglePlay(0, true)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#0369A1] text-white rounded-full hover:bg-[#075985] transition-all"
+          >
+            {playAll && isPlaying ? <Pause size={18}/> : <Play size={18}/>}
+            <span className="font-medium">Ganze Sure abspielen</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 text-slate-500 italic text-sm">
+          <Volume2 size={16}/> Vers {currentAyahIndex + 1} wird abgespielt...
+        </div>
+      </div>
+
+      {/* Vers Liste */}
+      <div className="space-y-4 px-2">
+        {ayahs.map((ayah, index) => (
+          <div 
+            key={ayah.number} 
+            className={`p-6 rounded-2xl border transition-all ${currentAyahIndex === index && isPlaying ? 'border-[#D4A574] bg-gold-50/20 shadow-md' : 'border-slate-100 bg-white hover:border-slate-200'}`}
+          >
+            <div className="flex justify-between items-start mb-4">
+              <span className="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-full text-xs font-bold text-slate-500">
+                {index + 1}
+              </span>
+              
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => toggleBookmark(ayah)}
+                  className="p-2 hover:bg-slate-50 rounded-full text-[#D4A574]"
+                >
+                  {bookmarks.some(b => b.number === ayah.number) ? <BookmarkCheck fill="currentColor"/> : <Bookmark/>}
+                </button>
+                <button 
+                  onClick={() => togglePlay(index, false)}
+                  className="p-2 bg-slate-100 hover:bg-[#D4A574] hover:text-white rounded-full transition-colors"
+                >
+                  {currentAyahIndex === index && isPlaying ? <Pause size={20}/> : <Play size={20}/>}
+                </button>
+              </div>
+            </div>
+
+            <p className="text-right text-3xl font-serif leading-loose mb-4 text-slate-800" dir="rtl">
+              {ayah.text}
+            </p>
+            <p className="text-slate-600 leading-relaxed italic border-l-2 border-[#D4A574]/30 pl-4">
+              {ayah.translation}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default QuranAudioPlayer;
