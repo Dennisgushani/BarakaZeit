@@ -370,3 +370,190 @@ const QuranAudioPlayer = ({ surahNumber, ayahs }) => {
 };
 
 export default QuranAudioPlayer;
+const CACHE_NAME = 'licht-des-islam-v1';
+const assets = [
+  '/',
+  '/index.html',
+  '/static/js/main.chunk.js',
+  '/static/js/bundle.js',
+  '/manifest.json'
+];
+
+self.addEventListener('install', evt => {
+  evt.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      cache.addAll(assets);
+    })
+  );
+});
+
+self.addEventListener('fetch', evt => {
+  evt.respondWith(
+    caches.match(evt.request).then(rec => {
+      return rec || fetch(evt.request);
+    })
+  );
+});
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, Pause, MapPin, Bookmark, Volume2, Globe } from 'lucide-react';
+
+const IslamicApp = () => {
+  // States für Gebetszeiten
+  const [timings, setTimings] = useState(null);
+  const [location, setLocation] = useState("Standort wird ermittelt...");
+  
+  // States für Quran & Audio
+  const [ayahs, setAyahs] = useState([]); // Hier kommen die Verse rein
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayAll, setIsPlayAll] = useState(false);
+  const [selectedQari, setSelectedQari] = useState('ar.abdulsamad');
+  const audioRef = useRef(new Audio());
+
+  const qaris = [
+    { id: 'ar.abdulsamad', name: 'Abdul Samad' },
+    { id: 'ar.abdulbasitmurattal', name: 'Abdul Basit' },
+    { id: 'ar.as-sudais', name: 'Abdurrahman As-Sudais' }
+  ];
+
+  // --- PART 1: GEBETSZEITEN AUTOMATIK ---
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        // Europa Check für Methode (MWL = 3, sonst ISNA = 2)
+        const method = (latitude > 35 && latitude < 70) ? 3 : 2;
+        
+        try {
+          const res = await fetch(
+            `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=${method}&higherLatitudeMethod=3`
+          );
+          const json = await res.json();
+          setTimings(json.data.timings);
+          setLocation(json.data.meta.timezone);
+        } catch (e) { console.error("API Fehler"); }
+      });
+    }
+    
+    // Service Worker Registrierung
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(() => console.log("Offline bereit!"));
+    }
+  }, []);
+
+  // --- PART 2: AUDIO LOGIK (EINZELN & ALLES) ---
+  useEffect(() => {
+    const audio = audioRef.current;
+    const handleNext = () => {
+      if (isPlayAll && currentIndex < ayahs.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      } else {
+        setIsPlaying(false);
+      }
+    };
+    audio.addEventListener('ended', handleNext);
+    return () => audio.removeEventListener('ended', handleNext);
+  }, [isPlayAll, currentIndex, ayahs]);
+
+  useEffect(() => {
+    if (isPlaying && ayahs[currentIndex]) {
+      audioRef.current.src = `https://cdn.islamic.network/quran/audio/128/${selectedQari}/${ayahs[currentIndex].number}.mp3`;
+      audioRef.current.play();
+    }
+  }, [currentIndex, isPlaying, selectedQari]);
+
+  const toggleAudio = (index, playAllMode) => {
+    setIsPlayAll(playAllMode);
+    if (index === currentIndex && isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      setCurrentIndex(index);
+      setIsPlaying(true);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans pb-20">
+      {/* HEADER & LOGO */}
+      <header className="bg-[#0369A1] text-white p-6 text-center shadow-lg">
+        <img src="/mein-logo.png" alt="Licht des Islam" className="h-20 mx-auto mb-2" />
+        <h1 className="text-xl font-serif tracking-widest uppercase">Licht des Islam</h1>
+      </header>
+
+      <main className="max-w-4xl mx-auto p-4 space-y-8">
+        
+        {/* GEBETSZEITEN TABELLE */}
+        <section className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="bg-[#D4A574] p-4 text-white flex justify-between items-center">
+            <h2 className="font-bold">Gebetszeiten</h2>
+            <div className="flex items-center text-xs opacity-90">
+              <MapPin size={14} className="mr-1"/> {location}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-6 divide-x divide-y md:divide-y-0">
+            {timings && Object.entries({
+              Fajr: timings.Fajr,
+              Sunrise: timings.Sunrise,
+              Dhuhr: timings.Dhuhr,
+              Asr: timings.Asr,
+              Maghrib: timings.Maghrib,
+              Isha: timings.Isha
+            }).map(([name, time]) => (
+              <div key={name} className="p-4 text-center">
+                <p className="text-xs text-slate-400 uppercase">{name}</p>
+                <p className="text-lg font-bold text-[#0369A1]">{time}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* QURAN AUDIO PLAYER */}
+        <section className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border shadow-sm">
+            <select 
+              className="bg-slate-100 p-2 rounded-lg text-sm outline-none"
+              value={selectedQari}
+              onChange={(e) => setSelectedQari(e.target.value)}
+            >
+              {qaris.map(q => <option key={q.id} value={q.id}>{q.name}</option>)}
+            </select>
+
+            <button 
+              onClick={() => toggleAudio(0, true)}
+              className="bg-[#0369A1] text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-[#025a8a]"
+            >
+              {isPlayAll && isPlaying ? <Pause size={18}/> : <Play size={18}/>}
+              Alles abspielen
+            </button>
+          </div>
+
+          {/* VERSE LISTE */}
+          <div className="grid gap-4">
+            {ayahs.map((ayah, index) => (
+              <div key={index} className="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-slate-300">VERS {index + 1}</span>
+                  <div className="flex gap-2">
+                    <button className="text-[#D4A574] p-2 hover:bg-slate-50 rounded-full"><Bookmark size={20}/></button>
+                    <button 
+                      onClick={() => toggleAudio(index, false)}
+                      className="p-2 bg-slate-100 rounded-full text-[#0369A1]"
+                    >
+                      {currentIndex === index && isPlaying && !isPlayAll ? <Pause size={20}/> : <Play size={20}/>}
+                    </button>
+                  </div>
+                </div>
+                <p className="text-right text-2xl font-serif text-slate-800" dir="rtl">{ayah.text}</p>
+                <p className="text-slate-500 text-sm italic">{ayah.translation}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+};
+
+export default IslamicApp;
