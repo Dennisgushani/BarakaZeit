@@ -6,7 +6,7 @@
 <title>BarakaZeit</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* DEIN BESTEHENDES DESIGN */
+/* DEIN ORIGINALES DESIGN */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480px;margin:0 auto;overflow:hidden;position:relative}
@@ -21,149 +21,179 @@ body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480p
 .content{flex:1;overflow-y:auto;padding:0 18px 20px;-webkit-overflow-scrolling:touch}
 .page{display:none}.page.on{display:block}
 
-/* NEUE ELEMENTE FÜR VIBRATION & ADHAN */
-.settings-card { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(212,175,55,0.1); }
-.settings-title { color: #d4af37; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: 700; border-bottom: 1px solid rgba(212,175,55,0.1); padding-bottom: 8px; }
-.gold-btn-outline { width: 100%; background: transparent; border: 1px solid #d4af37; color: #d4af37; padding: 12px; font-size: 0.75rem; letter-spacing: 2px; cursor: pointer; margin-top: 10px; transition: 0.3s; text-transform: uppercase; }
-.gold-btn-outline:active { background: rgba(212,175,55,0.1); transform: scale(0.98); }
-.vibe-slider { width: 100%; accent-color: #d4af37; margin: 15px 0; }
-.vibe-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); display: flex; justify-content: space-between; }
+/* STYLE FÜR EINSTELLUNGEN */
+.settings-grid { display: flex; flex-direction: column; gap: 15px; }
+.p-row { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(212,175,55,0.2); }
+.p-row-title { color: #d4af37; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.opt-box { display: flex; gap: 10px; align-items: center; margin-top: 5px; }
+select.mini-select { background: #1a1a2e; color: #fff; border: 1px solid #d4af37; padding: 5px; border-radius: 5px; font-size: 0.8rem; flex: 1; }
+input[type="checkbox"] { accent-color: #d4af37; transform: scale(1.2); }
 
-/* DEIN CSS FÜR DEN QURAN & GEBETSZEITEN (Bleibt identisch) */
-.srow{display:flex;gap:8px;margin-bottom:10px}.sinp{flex:1;padding:12px 16px;border-radius:24px;border:1px solid rgba(212,175,55,.2);background:rgba(255,255,255,.05);color:#fff;outline:none}.bsearch{width:48px;height:48px;border-radius:24px;border:none;background:#d4af37;display:flex;align-items:center;justify-content:center}.cinfo{text-align:center;margin-bottom:14px}.cname{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700}.next-prayer-card{background:linear-gradient(135deg,#2a2d5e 0%,#1c1e3f 100%);border:2px solid #d4af37;border-radius:20px;padding:28px 20px;text-align:center;margin-bottom:24px}.other-prayers-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.prayer-item{background:rgba(255,255,255,.05);border-radius:15px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;border:1px solid rgba(255,255,255,.1)}
+/* QURAN LISTE */
+.s-item { background: rgba(255,255,255,0.05); margin-bottom: 8px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.s-num { color: #d4af37; font-weight: bold; margin-right: 10px; }
 </style>
 </head>
 <body>
 <div class="app">
-<div class="hdr">
-  <div class="app-name">BarakaZeit</div>
-</div>
-<div class="sub">Genaue Gebetszeiten &amp; Der Heilige Quran</div>
+    <div class="hdr"><div class="app-name">BarakaZeit</div></div>
+    <div class="sub">Menden (Sauerland)</div>
 
-<div class="tabs">
-  <div class="tab on" id="tPrayer" onclick="goTab('prayer')"><span>🕌</span> Gebet</div>
-  <div class="tab" id="tQuran" onclick="goTab('quran')"><span>📖</span> Quran</div>
-  <div class="tab" id="tSet" onclick="goTab('settings')"><span>⚙️</span> Menü</div>
-</div>
-
-<div class="content">
-  <div class="page on" id="pPrayer">
-    <div class="srow">
-      <input class="sinp" id="cInp" placeholder="Stadt suchen...">
-      <button class="bsearch" onclick="doSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
-    </div>
-    <div class="cinfo">
-      <div class="cname" id="cName">Menden (Sauerland)</div>
-      <div class="date-container"><span class="hijri-date" id="hijriDate">--</span> | <span class="gregorian-date" id="gregDate">--</span></div>
-    </div>
-    <div class="next-prayer-card">
-      <div class="next-label">Nächstes Gebet</div>
-      <div class="next-name" id="nName">—</div>
-      <div class="next-countdown" id="nCd">--:--:--</div>
-    </div>
-    <div class="other-prayers-grid" id="pGrid"></div>
-  </div>
-
-  <div class="page" id="pQuran">
-    <div id="qSearchWrap" class="srow" style="margin-top:10px"><input class="sinp" id="qSin" placeholder="Sure suchen..." oninput="filtS()"></div>
-    <div id="sList" style="margin-top:15px;"></div>
-  </div>
-
-  <div class="page" id="pSettings">
-    <div class="settings-card">
-      <div class="settings-title">Gebetsruf (Adhan)</div>
-      <label style="font-size: 0.7rem; color: rgba(255,255,255,0.4);">ADHAN STIMME WÄHLEN</label>
-      <select class="sinp" id="adhanSelect" style="width:100%; margin-top:8px; border-radius: 12px;">
-        <option value="mekka">Makkah - Al-Haram</option>
-        <option value="medina">Madinah - Al-Nabawi</option>
-        <option value="alafasy">Mishary Rashid Alafasy</option>
-      </select>
-      <button class="gold-btn-outline" onclick="playAdhanTest()">Probe hören</button>
+    <div class="tabs">
+        <div class="tab on" onclick="goTab('prayer', this)">🕌 Gebet</div>
+        <div class="tab" onclick="goTab('quran', this)">📖 Quran</div>
+        <div class="tab" onclick="goTab('settings', this)">⚙️ Setup</div>
     </div>
 
-    <div class="settings-card">
-      <div class="settings-title">Vibration & Haptik</div>
-      <div class="vibe-label"><span>Intensität</span><span id="vibeVal">50%</span></div>
-      <input type="range" class="vibe-slider" id="vibeRange" min="0" max="100" value="50" oninput="updateVibeLabel(this.value)">
-      <button class="gold-btn-outline" onclick="triggerVibe()">Vibration Testen</button>
-    </div>
+    <div class="content">
+        <div id="page-prayer" class="page on">
+            <div id="timer-box" style="text-align:center; padding: 20px; background: rgba(212,175,55,0.1); border-radius: 20px; margin-bottom: 20px;">
+                <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">Nächstes Gebet</div>
+                <div id="next-name" style="font-size: 1.8rem; font-weight: bold; color: #d4af37;">--</div>
+                <div id="countdown" style="font-size: 2.5rem; font-family: monospace;">00:00:00</div>
+            </div>
+            <div id="prayer-list"></div>
+        </div>
 
-    <div class="settings-card">
-      <div class="settings-title">Berechnungsmethode</div>
-      <select class="sinp" id="mSel" onchange="doMeth()" style="width:100%; border-radius: 12px;">
-        <option value="3" selected>Muslim World League (Europa)</option>
-        <option value="4">Umm Al-Qura, Makkah</option>
-        <option value="2">ISNA (Nordamerika)</option>
-      </select>
+        <div id="page-quran" class="page">
+            <input type="text" id="qSearch" class="p-row" style="width:100%; margin-bottom:15px; background:rgba(255,255,255,0.05); color:white; border:1px solid #d4af37;" placeholder="Sure suchen..." onkeyup="filterQuran()">
+            <div id="surah-list">Lade Suren...</div>
+        </div>
+
+        <div id="page-settings" class="page">
+            <h3 style="color:#d4af37; margin-bottom:15px;">Benachrichtigungen</h3>
+            <div class="settings-grid" id="settings-container">
+                </div>
+        </div>
     </div>
-  </div>
-</div>
 </div>
 
-<audio id="adhanAudio"></audio>
+<audio id="adhanPlayer"></audio>
 
 <script>
-// DEINE LOGIK-VARIABLEN
-var pT={}, cLa=51.4338, cLo=7.7926;
+const prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+let prayerTimes = {};
+let config = JSON.parse(localStorage.getItem('barakaConfig')) || {
+    adhan: { Fajr: 'none', Dhuhr: 'default', Asr: 'default', Maghrib: 'default', Isha: 'default' },
+    vibe: { Fajr: true, Dhuhr: true, Asr: true, Maghrib: true, Isha: true }
+};
 
-function goTab(t){
-  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('on'));
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));
-  if(t==='prayer'){ document.getElementById('tPrayer').classList.add('on'); document.getElementById('pPrayer').classList.add('on'); }
-  if(t==='quran'){ document.getElementById('tQuran').classList.add('on'); document.getElementById('pQuran').classList.add('on'); }
-  if(t==='settings'){ document.getElementById('tSet').classList.add('on'); document.getElementById('pSettings').classList.add('on'); }
+// TAB NAVIGATION
+function goTab(pageId, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    document.getElementById('page-' + pageId).classList.add('on');
+    el.classList.add('on');
+    if(pageId === 'quran') loadSurahs();
+    if(pageId === 'settings') renderSettings();
 }
 
-// --- NEUE FUNKTIONEN FÜR ADHAN & VIBRATION ---
-
-function playAdhanTest() {
-  const audio = document.getElementById('adhanAudio');
-  const type = document.getElementById('adhanSelect').value;
-  const sources = {
-    'mekka': 'https://www.islamcan.com/audio/adhan/azan1.mp3',
-    'medina': 'https://www.islamcan.com/audio/adhan/azan2.mp3',
-    'alafasy': 'https://www.islamcan.com/audio/adhan/azan20.mp3'
-  };
-  audio.src = sources[type];
-  audio.play();
+// QURAN LOGIK
+async function loadSurahs() {
+    const res = await fetch('https://api.alquran.cloud/v1/surah');
+    const data = await res.json();
+    const list = document.getElementById('surah-list');
+    list.innerHTML = data.data.map(s => `
+        <div class="s-item">
+            <span><span class="s-num">${s.number}</span> ${s.englishName}</span>
+            <span style="font-family:'Amiri'">${s.name}</span>
+        </div>
+    `).join('');
 }
 
-function updateVibeLabel(v) { document.getElementById('vibeVal').textContent = v + '%'; }
-
-function triggerVibe() {
-  if ("vibrate" in navigator) {
-    // Ein edler Doppel-Vibrations-Takt (wie ein Herzschlag)
-    navigator.vibrate([150, 100, 150]);
-  } else {
-    alert("Vibration wird von diesem Gerät/Browser nicht unterstützt.");
-  }
+function filterQuran() {
+    let val = document.getElementById('qSearch').value.toLowerCase();
+    document.querySelectorAll('.s-item').forEach(item => {
+        item.style.display = item.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
+    });
 }
 
-// DEIN BESTEHENDER QURAN & GEBETS-CODE (Initialisierung)
-function fP(la,lo,m){
-  fetch(`https://api.aladhan.com/v1/timings?latitude=${la}&longitude=${lo}&method=${m}`)
-  .then(r=>r.json()).then(d=>{
-    pT=d.data.timings;
-    renderGrid();
-    updateDates(d.data.date);
-  });
+// GEBETSZEITEN & TIMER
+async function getPrays() {
+    const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Menden&country=Germany&method=3');
+    const data = await res.json();
+    prayerTimes = data.data.timings;
+    renderPrayers();
+    startTimer();
 }
 
-function renderGrid(){
-  let g=document.getElementById('pGrid'); g.innerHTML='';
-  let keys = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-  keys.forEach(k=>{
-    g.innerHTML+=`<div class="prayer-item"><span>${k}</span><strong>${pT[k]}</strong></div>`;
-  });
+function renderPrayers() {
+    const list = document.getElementById('prayer-list');
+    list.innerHTML = prayerNames.map(p => `
+        <div class="p-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span>${p}</span>
+            <strong style="color:#d4af37">${prayerTimes[p]}</strong>
+        </div>
+    `).join('');
 }
 
-function updateDates(dd){
-  document.getElementById('hijriDate').textContent = dd.hijri.day + ". " + dd.hijri.month.en;
-  document.getElementById('gregDate').textContent = dd.gregorian.day + ". " + dd.gregorian.month.en;
+function startTimer() {
+    setInterval(() => {
+        let now = new Date();
+        let times = prayerNames.map(n => {
+            let t = prayerTimes[n].split(':');
+            let d = new Date(); d.setHours(t[0], t[1], 0);
+            if (d < now) d.setDate(d.getDate() + 1);
+            return { name: n, diff: d - now, time: d };
+        }).sort((a,b) => a.diff - b.diff);
+
+        let next = times[0];
+        document.getElementById('next-name').innerText = next.name;
+        
+        let h = Math.floor(next.diff/3600000);
+        let m = Math.floor((next.diff%3600000)/60000);
+        let s = Math.floor((next.diff%60000)/1000);
+        document.getElementById('countdown').innerText = 
+            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+        if (next.diff < 1000) triggerAlarm(next.name);
+    }, 1000);
 }
 
-// Start
-fP(cLa, cLo, 3);
+// EINSTELLUNGEN RENDERN (Adhan & Vibe pro Gebet)
+function renderSettings() {
+    const container = document.getElementById('settings-container');
+    const adhanOptions = [
+        {val: 'none', txt: 'Aus'},
+        {val: 'https://www.islamcan.com/audio/adhan/azan1.mp3', txt: 'Mekka'},
+        {val: 'https://www.islamcan.com/audio/adhan/azan2.mp3', txt: 'Medina'},
+        {val: 'https://www.islamcan.com/audio/adhan/azan20.mp3', txt: 'Alafasy'},
+        {val: 'https://www.islamcan.com/audio/adhan/azan16.mp3', txt: 'Ägypten'}
+    ];
+
+    container.innerHTML = prayerNames.map(p => `
+        <div class="p-row">
+            <div class="p-row-title"><span>${p}</span></div>
+            <div class="opt-box">
+                <select class="mini-select" onchange="saveCfg('${p}', 'adhan', this.value)">
+                    ${adhanOptions.map(o => `<option value="${o.val}" ${config.adhan[p] === o.val ? 'selected' : ''}>${o.txt}</option>`).join('')}
+                </select>
+                <label style="font-size:0.7rem">📳 <input type="checkbox" ${config.vibe[p] ? 'checked' : ''} onchange="saveCfg('${p}', 'vibe', this.checked)"></label>
+            </div>
+        </div>
+    `).join('');
+}
+
+function saveCfg(prayer, type, val) {
+    config[type][prayer] = val;
+    localStorage.setItem('barakaConfig', JSON.stringify(config));
+}
+
+function triggerAlarm(name) {
+    // Vibration
+    if (config.vibe[name] && "vibrate" in navigator) {
+        navigator.vibrate([500, 200, 500, 200, 500]);
+    }
+    // Adhan
+    if (config.adhan[name] !== 'none') {
+        let player = document.getElementById('adhanPlayer');
+        player.src = config.adhan[name];
+        player.play();
+    }
+}
+
+// Init
+getPrays();
 </script>
 </body>
 </html>
