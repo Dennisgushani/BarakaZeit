@@ -1,199 +1,254 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BarakaZeit</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-/* DEIN ORIGINALES DESIGN */
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480px;margin:0 auto;overflow:hidden;position:relative}
-.app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.hdr{text-align:center;padding:22px 20px 6px;flex-shrink:0}
-.app-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;letter-spacing:.5px;color:#d4af37;text-shadow:0 2px 14px rgba(212,175,55,.12)}
-.sub{font-size:.9rem;font-weight:500;color:#d4af37;padding:7px 10px 10px;text-shadow:0 0 16px rgba(212,175,55,.2);line-height:1.3}
-.tabs{display:flex;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;margin-bottom:14px}
-.tab{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0 9px;font-size:.95rem;font-weight:500;color:rgba(255,255,255,.55);cursor:pointer;position:relative;transition:color .3s;user-select:none}
-.tab.on{color:#d4af37;text-shadow:0 0 12px rgba(212,175,55,.2)}
-.tab.on::after{content:'';position:absolute;bottom:-1px;left:18%;width:64%;height:2px;background:linear-gradient(90deg,transparent,#d4af37,transparent)}
-.content{flex:1;overflow-y:auto;padding:0 18px 20px;-webkit-overflow-scrolling:touch}
-.page{display:none}.page.on{display:block}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BarakaZeit Pro | 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --bg: #060714; --glass: rgba(255, 255, 255, 0.05); --active: rgba(212, 175, 55, 0.2); }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
+        
+        .app-shell { max-width: 480px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #1a1b3a, #060714); border-right: 1px solid rgba(255,255,255,0.05); border-left: 1px solid rgba(255,255,255,0.05); }
+        
+        /* Header */
+        header { padding: 30px 20px 10px; text-align: center; flex-shrink: 0; }
+        .logo { font-family: 'Amiri', serif; font-size: 2.2rem; color: var(--gold); margin-bottom: 5px; }
+        .location-tag { font-size: 0.75rem; color: #aeb1d8; opacity: 0.8; letter-spacing: 1px; }
 
-/* STYLE FÜR EINSTELLUNGEN */
-.settings-grid { display: flex; flex-direction: column; gap: 15px; }
-.p-row { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(212,175,55,0.2); }
-.p-row-title { color: #d4af37; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
-.opt-box { display: flex; gap: 10px; align-items: center; margin-top: 5px; }
-select.mini-select { background: #1a1a2e; color: #fff; border: 1px solid #d4af37; padding: 5px; border-radius: 5px; font-size: 0.8rem; flex: 1; }
-input[type="checkbox"] { accent-color: #d4af37; transform: scale(1.2); }
+        /* Content Area */
+        .main-scroll { flex: 1; overflow-y: auto; padding: 15px; scrollbar-width: none; -ms-overflow-style: none; }
+        .main-scroll::-webkit-scrollbar { display: none; }
+        .page { display: none; animation: slideIn 0.3s ease-out; }
+        .page.active { display: block; }
 
-/* QURAN LISTE */
-.s-item { background: rgba(255,255,255,0.05); margin-bottom: 8px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.s-num { color: #d4af37; font-weight: bold; margin-right: 10px; }
-</style>
+        /* Gebets-Karten */
+        .prayer-card { background: var(--glass); border-radius: 20px; padding: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .prayer-card.highlight { border-color: var(--gold); background: var(--active); box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+        .p-info h3 { font-size: 0.85rem; text-transform: uppercase; color: #888; margin-bottom: 4px; }
+        .p-info .time { font-size: 1.8rem; font-weight: 700; }
+        .p-info .arabic { font-family: 'Amiri', serif; color: var(--gold); margin-left: 10px; font-size: 1.2rem; }
+        
+        .adhan-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; }
+        .adhan-btn.muted { filter: grayscale(1); opacity: 0.3; }
+
+        /* Kompass */
+        .qibla-box { text-align: center; padding: 20px; }
+        .compass-wrap { position: relative; width: 280px; height: 280px; margin: 20px auto; }
+        #compass-disc { width: 100%; height: 100%; transition: transform 0.2s cubic-bezier(0.1, 0.5, 0.1, 1); filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.2)); }
+        .kaaba-indicator { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); color: red; font-size: 1.5rem; z-index: 10; text-shadow: 0 0 10px red; }
+
+        /* Navigations-Leiste */
+        nav { background: rgba(10, 11, 30, 0.95); backdrop-filter: blur(15px); display: flex; padding: 15px 0; border-top: 1px solid rgba(212, 175, 55, 0.2); flex-shrink: 0; }
+        .nav-link { flex: 1; text-align: center; color: #666; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .nav-link.active { color: var(--gold); }
+        .nav-link i { display: block; font-size: 1.5rem; margin-bottom: 4px; font-style: normal; }
+
+        /* Button & Inputs */
+        .btn { background: var(--gold); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .input-box { background: var(--glass); border: 1px solid rgba(212,175,55,0.3); padding: 12px; border-radius: 10px; color: #fff; width: 100%; margin-bottom: 10px; outline: none; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body>
-<div class="app">
-    <div class="hdr"><div class="app-name">BarakaZeit</div></div>
-    <div class="sub">Menden (Sauerland)</div>
 
-    <div class="tabs">
-        <div class="tab on" onclick="goTab('prayer', this)">🕌 Gebet</div>
-        <div class="tab" onclick="goTab('quran', this)">📖 Quran</div>
-        <div class="tab" onclick="goTab('settings', this)">⚙️ Setup</div>
-    </div>
+<div class="app-shell">
+    <header>
+        <div class="logo">بركة Zeit</div>
+        <div class="location-tag" id="loc-display">Menden, DE</div>
+    </header>
 
-    <div class="content">
-        <div id="page-prayer" class="page on">
-            <div id="timer-box" style="text-align:center; padding: 20px; background: rgba(212,175,55,0.1); border-radius: 20px; margin-bottom: 20px;">
-                <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">Nächstes Gebet</div>
-                <div id="next-name" style="font-size: 1.8rem; font-weight: bold; color: #d4af37;">--</div>
-                <div id="countdown" style="font-size: 2.5rem; font-family: monospace;">00:00:00</div>
-            </div>
-            <div id="prayer-list"></div>
+    <div class="main-scroll">
+        <div id="page-pray" class="page active">
+            <div id="prayer-container">
+                </div>
+            <p style="text-align: center; font-size: 0.7rem; color: #555; margin-top: 20px;">
+                Adhan wird nur abgespielt, wenn die App im Vordergrund aktiv ist.
+            </p>
         </div>
 
-        <div id="page-quran" class="page">
-            <input type="text" id="qSearch" class="p-row" style="width:100%; margin-bottom:15px; background:rgba(255,255,255,0.05); color:white; border:1px solid #d4af37;" placeholder="Sure suchen..." onkeyup="filterQuran()">
-            <div id="surah-list">Lade Suren...</div>
+        <div id="page-qibla" class="page">
+            <div class="qibla-box">
+                <h3 style="color: var(--gold); margin-bottom: 10px;">Qibla Finder</h3>
+                <div class="compass-wrap">
+                    <div class="kaaba-indicator">▼</div>
+                    <img id="compass-disc" src="https://i.imgur.com/8X5f2Xl.png" alt="Compass">
+                </div>
+                <p id="q-angle" style="margin-top: 15px; font-weight: bold;">Warte auf Sensor...</p>
+                <button class="btn" onclick="initCompass()">Sensor aktivieren</button>
+            </div>
         </div>
 
         <div id="page-settings" class="page">
-            <h3 style="color:#d4af37; margin-bottom:15px;">Benachrichtigungen</h3>
-            <div class="settings-grid" id="settings-container">
-                </div>
+            <h3 style="color: var(--gold); margin-bottom: 15px;">Konfiguration</h3>
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.8rem; display: block; margin-bottom: 5px;">Standort manuell ändern:</label>
+                <input type="text" id="city-inp" class="input-box" placeholder="Stadt eingeben...">
+                <button class="btn" onclick="updateLocationManually()">Aktualisieren</button>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; display: block; margin-bottom: 5px;">Berechnungsmethode:</label>
+                <select id="meth-sel" class="input-box" onchange="loadPrayers()">
+                    <option value="3">Muslim World League</option>
+                    <option value="13">Diyanet (Türkei)</option>
+                    <option value="2">ISNA (Nordamerika)</option>
+                    <option value="4">Umm Al-Qura (Makkah)</option>
+                </select>
+            </div>
+            <button class="btn" style="background: #444; color: #fff; margin-top: 30px;" onclick="testAdhan()">🔊 Adhan Probe hören</button>
         </div>
     </div>
+
+    <nav>
+        <div class="nav-link active" onclick="nav('pray', this)"><i>🕌</i>Gebet</div>
+        <div class="nav-link" onclick="nav('qibla', this)"><i>🧭</i>Qibla</div>
+        <div class="nav-link" onclick="nav('settings', this)"><i>⚙️</i>Optionen</div>
+    </nav>
 </div>
 
-<audio id="adhanPlayer"></audio>
+<audio id="adhan-audio" preload="auto">
+    <source src="https://www.islamcan.com/audio/adhan/adhan1.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-const prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-let prayerTimes = {};
-let config = JSON.parse(localStorage.getItem('barakaConfig')) || {
-    adhan: { Fajr: 'none', Dhuhr: 'default', Asr: 'default', Maghrib: 'default', Isha: 'default' },
-    vibe: { Fajr: true, Dhuhr: true, Asr: true, Maghrib: true, Isha: true }
-};
+    let lat = 51.4338;
+    let lon = 7.7926;
+    let prayersData = {};
+    let adhanSettings = { Fajr:true, Dhuhr:true, Asr:true, Maghrib:true, Isha:true };
+    let qiblaAngle = 0;
 
-// TAB NAVIGATION
-function goTab(pageId, el) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-    document.getElementById('page-' + pageId).classList.add('on');
-    el.classList.add('on');
-    if(pageId === 'quran') loadSurahs();
-    if(pageId === 'settings') renderSettings();
-}
-
-// QURAN LOGIK
-async function loadSurahs() {
-    const res = await fetch('https://api.alquran.cloud/v1/surah');
-    const data = await res.json();
-    const list = document.getElementById('surah-list');
-    list.innerHTML = data.data.map(s => `
-        <div class="s-item">
-            <span><span class="s-num">${s.number}</span> ${s.englishName}</span>
-            <span style="font-family:'Amiri'">${s.name}</span>
-        </div>
-    `).join('');
-}
-
-function filterQuran() {
-    let val = document.getElementById('qSearch').value.toLowerCase();
-    document.querySelectorAll('.s-item').forEach(item => {
-        item.style.display = item.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
-    });
-}
-
-// GEBETSZEITEN & TIMER
-async function getPrays() {
-    const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Menden&country=Germany&method=3');
-    const data = await res.json();
-    prayerTimes = data.data.timings;
-    renderPrayers();
-    startTimer();
-}
-
-function renderPrayers() {
-    const list = document.getElementById('prayer-list');
-    list.innerHTML = prayerNames.map(p => `
-        <div class="p-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span>${p}</span>
-            <strong style="color:#d4af37">${prayerTimes[p]}</strong>
-        </div>
-    `).join('');
-}
-
-function startTimer() {
-    setInterval(() => {
-        let now = new Date();
-        let times = prayerNames.map(n => {
-            let t = prayerTimes[n].split(':');
-            let d = new Date(); d.setHours(t[0], t[1], 0);
-            if (d < now) d.setDate(d.getDate() + 1);
-            return { name: n, diff: d - now, time: d };
-        }).sort((a,b) => a.diff - b.diff);
-
-        let next = times[0];
-        document.getElementById('next-name').innerText = next.name;
+    window.onload = () => {
+        // GPS Check
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(p => {
+                lat = p.coords.latitude; lon = p.coords.longitude;
+                document.getElementById('loc-display').innerText = "Standort erkannt (GPS)";
+                loadPrayers();
+            }, () => loadPrayers());
+        } else { loadPrayers(); }
         
-        let h = Math.floor(next.diff/3600000);
-        let m = Math.floor((next.diff%3600000)/60000);
-        let s = Math.floor((next.diff%60000)/1000);
-        document.getElementById('countdown').innerText = 
-            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        // Background Watcher
+        setInterval(checkForAdhan, 30000); // Alle 30 Sekunden prüfen
+    };
 
-        if (next.diff < 1000) triggerAlarm(next.name);
-    }, 1000);
-}
-
-// EINSTELLUNGEN RENDERN (Adhan & Vibe pro Gebet)
-function renderSettings() {
-    const container = document.getElementById('settings-container');
-    const adhanOptions = [
-        {val: 'none', txt: 'Aus'},
-        {val: 'https://www.islamcan.com/audio/adhan/azan1.mp3', txt: 'Mekka'},
-        {val: 'https://www.islamcan.com/audio/adhan/azan2.mp3', txt: 'Medina'},
-        {val: 'https://www.islamcan.com/audio/adhan/azan20.mp3', txt: 'Alafasy'},
-        {val: 'https://www.islamcan.com/audio/adhan/azan16.mp3', txt: 'Ägypten'}
-    ];
-
-    container.innerHTML = prayerNames.map(p => `
-        <div class="p-row">
-            <div class="p-row-title"><span>${p}</span></div>
-            <div class="opt-box">
-                <select class="mini-select" onchange="saveCfg('${p}', 'adhan', this.value)">
-                    ${adhanOptions.map(o => `<option value="${o.val}" ${config.adhan[p] === o.val ? 'selected' : ''}>${o.txt}</option>`).join('')}
-                </select>
-                <label style="font-size:0.7rem">📳 <input type="checkbox" ${config.vibe[p] ? 'checked' : ''} onchange="saveCfg('${p}', 'vibe', this.checked)"></label>
-            </div>
-        </div>
-    `).join('');
-}
-
-function saveCfg(prayer, type, val) {
-    config[type][prayer] = val;
-    localStorage.setItem('barakaConfig', JSON.stringify(config));
-}
-
-function triggerAlarm(name) {
-    // Vibration
-    if (config.vibe[name] && "vibrate" in navigator) {
-        navigator.vibrate([500, 200, 500, 200, 500]);
+    function nav(pageId, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-'+pageId).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        el.classList.add('active');
     }
-    // Adhan
-    if (config.adhan[name] !== 'none') {
-        let player = document.getElementById('adhanPlayer');
-        player.src = config.adhan[name];
-        player.play();
-    }
-}
 
-// Init
-getPrays();
+    async function loadPrayers() {
+        const meth = document.getElementById('meth-sel').value;
+        const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=${meth}`);
+        const json = await res.json();
+        prayersData = json.data.timings;
+        renderPrayers();
+        calcQibla();
+    }
+
+    function renderPrayers() {
+        const keys = {Fajr:'Fajr', Dhuhr:'Dhuhr', Asr:'Asr', Maghrib:'Maghrib', Isha:'Isha'};
+        const container = document.getElementById('prayer-container');
+        container.innerHTML = "";
+        
+        const now = new Date();
+        const currentTimeStr = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+
+        Object.keys(keys).forEach(k => {
+            const isHighlight = prayersData[k] > currentTimeStr; // Sehr vereinfachter Check
+            container.innerHTML += `
+                <div class="prayer-card ${isHighlight ? '' : 'highlight'}">
+                    <div class="p-info">
+                        <h3>${k} <span class="arabic">${getArName(k)}</span></h3>
+                        <div class="time">${prayersData[k]}</div>
+                    </div>
+                    <div class="adhan-btn ${adhanSettings[k] ? '' : 'muted'}" onclick="toggleAdhan('${k}', this)">
+                        ${adhanSettings[k] ? '🔔' : '🔕'}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function getArName(k) {
+        const names = {Fajr:'الفجر', Dhuhr:'الظهر', Asr:'العصر', Maghrib:'المغرب', Isha:'العشاء'};
+        return names[k] || "";
+    }
+
+    function toggleAdhan(k, el) {
+        adhanSettings[k] = !adhanSettings[k];
+        renderPrayers();
+    }
+
+    function testAdhan() {
+        const a = document.getElementById('adhan-audio');
+        a.currentTime = 0;
+        a.play().catch(e => alert("Bitte klicke einmal auf die Seite, um Audio zu erlauben."));
+    }
+
+    function checkForAdhan() {
+        const now = new Date();
+        const timeNow = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+        
+        for (let p in adhanSettings) {
+            if (adhanSettings[p] && prayersData[p] === timeNow) {
+                testAdhan();
+                break; 
+            }
+        }
+    }
+
+    // --- KOMPASS LOGIK ---
+    function calcQibla() {
+        const mLat = 21.4225 * Math.PI / 180;
+        const mLon = 39.8262 * Math.PI / 180;
+        const uLat = lat * Math.PI / 180;
+        const uLon = lon * Math.PI / 180;
+        
+        const y = Math.sin(mLon - uLon);
+        const x = Math.cos(uLat) * Math.tan(mLat) - Math.sin(uLat) * Math.cos(mLon - uLon);
+        qiblaAngle = Math.atan2(y, x) * 180 / Math.PI;
+        if (qiblaAngle < 0) qiblaAngle += 360;
+    }
+
+    function initCompass() {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission().then(state => {
+                if(state === 'granted') window.addEventListener('deviceorientation', handleRotate);
+            });
+        } else {
+            window.addEventListener('deviceorientation', handleRotate);
+        }
+    }
+
+    function handleRotate(e) {
+        let heading = e.webkitCompassHeading || (360 - e.alpha);
+        if (heading) {
+            const disc = document.getElementById('compass-disc');
+            // Die Nadel (Kaaba-Indikator) zeigt auf 0 Grad der App. 
+            // Das Zifferblatt muss so gedreht werden, dass die Differenz stimmt.
+            const totalRotate = qiblaAngle - heading;
+            disc.style.transform = `rotate(${totalRotate}deg)`;
+            document.getElementById('q-angle').innerText = `Kaaba: ${Math.round(qiblaAngle)}° | Kompass: ${Math.round(heading)}°`;
+        }
+    }
+
+    async function updateLocationManually() {
+        const city = document.getElementById('city-inp').value;
+        if(!city) return;
+        const res = await fetch(`https://api.aladhan.com/v1/timingsByAddress?address=${encodeURIComponent(city)}`);
+        const d = await res.json();
+        if(d.data) {
+            lat = d.data.meta.latitude;
+            lon = d.data.meta.longitude;
+            document.getElementById('loc-display').innerText = city;
+            loadPrayers();
+            alert("Erfolgreich aktualisiert!");
+        }
+    }
 </script>
 </body>
 </html>
