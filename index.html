@@ -1,966 +1,108 @@
-hallo welt
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Licht des Islam - Gebetszeiten</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        /* DEIN CSS CODE */
-        body {
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            background: 
-                radial-gradient(circle at 30% 20%, rgba(138, 43, 226, 0.3) 0%, transparent 50%), 
-                radial-gradient(circle at 70% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%), 
-                linear-gradient(135deg, #0A0F29 0%, #1A1F39 100%);
-            color: #FFFFFF;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .time-row {
-            position: relative;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            margin: 15px auto;
-            padding: 20px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
-
-        .time-row:hover {
-            transform: scale(1.02);
-            border-color: rgba(255, 215, 0, 0.4);
-        }
-
-        .gold-symbol {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
-            margin-right: 20px;
-            font-size: 24px;
-        }
-
-        .time-info {
-            flex-grow: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .label {
-            font-weight: 300;
-            letter-spacing: 1px;
-            opacity: 0.8;
-        }
-
-        .time {
-            font-weight: 600;
-            font-size: 1.2rem;
-            color: #FFD700; /* Gold */
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Islam App</title>
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+  margin: 0;
+}
+header {
+  background: #16a34a;
+  padding: 15px;
+  font-size: 20px;
+}
+.card {
+  background: #1e293b;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 10px;
+}
+button {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+</style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2 style="text-align: center; margin-bottom: 30px; font-weight: 300;">Gebetszeiten</h2>
+<header>🕌 Gebetszeiten & Quran</header>
 
-    <div class="time-row">
-        <div class="gold-symbol">🌙</div>
-        <div class="time-info">
-            <span class="label">Fajr</span>
-            <span class="time">05:14</span>
-        </div>
-    </div>
-
-    <div class="time-row">
-        <div class="gold-symbol">☀️</div>
-        <div class="time-info">
-            <span class="label">Dhuhr</span>
-            <span class="time">13:22</span>
-        </div>
-    </div>
-
-    <div class="time-row">
-        <div class="gold-symbol">✨</div>
-        <div class="time-info">
-            <span class="label">Maghrib</span>
-            <span class="time">18:45</span>
-        </div>
-    </div>
+<div class="card">
+  <h2>📍 Dein Standort</h2>
+  <p id="location">Lädt...</p>
 </div>
 
+<div class="card">
+  <h2>🕐 Gebetszeiten</h2>
+  <div id="prayerTimes">Lädt...</div>
+</div>
+
+<div class="card">
+  <h2>📖 Quran</h2>
+  <select id="surahSelect"></select>
+  <button onclick="loadSurah()">Laden</button>
+  <div id="quranText" style="margin-top:10px;"></div>
+</div>
+
+<script>
+// Standort holen
+navigator.geolocation.getCurrentPosition(pos => {
+  let lat = pos.coords.latitude;
+  let lon = pos.coords.longitude;
+
+  document.getElementById("location").innerText =
+    "Lat: " + lat.toFixed(2) + " | Lon: " + lon.toFixed(2);
+
+  // Gebetszeiten API
+  fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
+    .then(res => res.json())
+    .then(data => {
+      let t = data.data.timings;
+      document.getElementById("prayerTimes").innerHTML = `
+        Fajr: ${t.Fajr}<br>
+        Dhuhr: ${t.Dhuhr}<br>
+        Asr: ${t.Asr}<br>
+        Maghrib: ${t.Maghrib}<br>
+        Isha: ${t.Isha}
+      `;
+    });
+});
+
+// Surah Liste laden
+fetch("https://api.alquran.cloud/v1/surah")
+  .then(res => res.json())
+  .then(data => {
+    let select = document.getElementById("surahSelect");
+    data.data.forEach(surah => {
+      let opt = document.createElement("option");
+      opt.value = surah.number;
+      opt.text = surah.number + " - " + surah.englishName;
+      select.appendChild(opt);
+    });
+  });
+
+// Quran laden
+function loadSurah() {
+  let num = document.getElementById("surahSelect").value;
+  fetch(`https://api.alquran.cloud/v1/surah/${num}/de.asad`)
+    .then(res => res.json())
+    .then(data => {
+      let text = data.data.ayahs.map(a => a.text).join("<br><br>");
+      document.getElementById("quranText").innerHTML = text;
+    });
+}
+</script>
+
 </body>
-    import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Loader2 } from 'lucide-react';
-
-const PrayerTimes = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setError("Geolocation wird von deinem Browser nicht unterstützt.");
-      setLoading(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        
-        // Dynamische Auswahl der Methode: 
-        // Methode 3 (MWL) für Europa, sonst Methode 2 (ISNA)
-        // Eine einfache Schätzung basierend auf Breitengrad/Längengrad für Europa
-        const isEurope = latitude > 35 && latitude < 70 && longitude > -25 && longitude < 40;
-        const methodId = isEurope ? 3 : 2;
-
-        try {
-          // API-Aufruf mit deinen exakten Anforderungen
-          const response = await fetch(
-            `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=${methodId}&higherLatitudeMethod=3`
-          );
-          const result = await response.json();
-
-          if (result.code === 200) {
-            setData(result.data);
-          } else {
-            throw new Error("API-Fehler");
-          }
-        } catch (err) {
-          setError("Fehler beim Abrufen der Gebetszeiten.");
-        } finally {
-          setLoading(false);
-        }
-      },
-      (err) => {
-        setError("Standortzugriff verweigert. Bitte aktiviere die Ortungsdienste.");
-        setLoading(false);
-      }
-    );
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center p-10 space-y-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#D4A574]" />
-        <p className="text-slate-500">Ermittle Standort und Gebetszeiten...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div className="p-6 text-red-500 bg-red-50 rounded-lg border border-red-200">{error}</div>;
-  }
-
-  const timings = data.timings;
-  const prayerDisplay = [
-    { id: 'Fajr', label: 'Fajr', arabic: 'الفجر' },
-    { id: 'Sunrise', label: 'Sonnenaufgang', arabic: 'الشروق' },
-    { id: 'Dhuhr', label: 'Dhuhr', arabic: 'الظهر' },
-    { id: 'Asr', label: 'Asr', arabic: 'العصر' },
-    { id: 'Maghrib', label: 'Maghrib', arabic: 'المغرب' },
-    { id: 'Isha', label: 'Isha', arabic: 'العشاء' },
-  ];
-
-  return (
-    <div className="max-w-md mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
-      {/* Header Bereich mit Logo-Platzhalter */}
-      <div className="bg-[#0369A1] p-8 text-white text-center relative">
-        <div className="flex justify-center mb-4">
-            {/* Hier wird dein Logo-Bild eingefügt */}
-            <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
-                <span className="text-[#D4A574] font-serif text-xl font-bold">LICHT</span>
-            </div>
-        </div>
-        <h2 className="text-2xl font-serif font-bold">Gebetszeiten</h2>
-        <div className="flex items-center justify-center mt-2 text-white/80 text-sm">
-          <MapPin className="w-4 h-4 mr-1" />
-          <span>{data.meta.timezone} (Auto-Location)</span>
-        </div>
-      </div>
-
-      {/* Liste der Zeiten */}
-      <div className="p-6 space-y-3 bg-slate-50">
-        {prayerDisplay.map((prayer) => (
-          <div 
-            key={prayer.id}
-            className="flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-[#D4A574] transition-colors group"
-          >
-            <div className="flex flex-col">
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
-                {prayer.arabic}
-              </span>
-              <span className="text-slate-700 font-bold">{prayer.label}</span>
-            </div>
-            <div className="text-2xl font-mono font-bold text-[#0369A1] group-hover:text-[#D4A574] transition-colors">
-              {timings[prayer.id]}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Info-Footer */}
-      <div className="p-4 bg-slate-100 text-center text-[10px] text-slate-400 uppercase tracking-[0.2em]">
-        Methode: {data.meta.method.name} | Sommer-Korrektur Aktiv
-      </div>
-    </div>
-  );
-};
-
-export default PrayerTimes;
-            import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, SkipForward, SkipBack, Bookmark, BookmarkCheck, Volume2 } from 'lucide-react';
-
-const QuranAudioPlayer = ({ surahNumber, ayahs }) => {
-  const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playAll, setPlayAll] = useState(false);
-  const [bookmarks, setBookmarks] = useState([]);
-  const [selectedQari, setSelectedQari] = useState('ar.alafasy'); // Standard
-  const audioRef = useRef(new Audio());
-
-  // Deine gewünschten Qaris (IDs für die API)
-  const qaris = [
-    { id: 'ar.abdulsamad', name: 'Abdul Samad' },
-    { id: 'ar.as-sudais', name: 'Abdurrahman As-Sudais' },
-    { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy' }
-  ];
-
-  // Lesezeichen aus LocalStorage laden
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('quran-bookmarks') || '[]');
-    setBookmarks(saved);
-  }, []);
-
-  // Audio-Logik: Wenn ein Vers endet und "Play All" aktiv ist
-  useEffect(() => {
-    const audio = audioRef.current;
-    
-    const handleEnded = () => {
-      if (playAll && currentAyahIndex < ayahs.length - 1) {
-        setCurrentAyahIndex(prev => prev + 1);
-      } else {
-        setIsPlaying(false);
-      }
-    };
-
-    audio.addEventListener('ended', handleEnded);
-    return () => audio.removeEventListener('ended', handleEnded);
-  }, [playAll, currentAyahIndex, ayahs]);
-
-  // Wenn sich der Index oder Qari ändert, neues Audio laden
-  useEffect(() => {
-    if (isPlaying) {
-      const ayahNumber = ayahs[currentAyahIndex].number;
-      audioRef.current.src = `https://cdn.islamic.network/quran/audio/128/${selectedQari}/${ayahNumber}.mp3`;
-      audioRef.current.play();
-    }
-  }, [currentAyahIndex, selectedQari, isPlaying]);
-
-  const togglePlay = (index = currentAyahIndex, all = false) => {
-    setPlayAll(all);
-    if (index === currentAyahIndex && isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      setCurrentAyahIndex(index);
-      setIsPlaying(true);
-    }
-  };
-
-  const toggleBookmark = (ayah) => {
-    let newBookmarks;
-    const isBookmarked = bookmarks.some(b => b.number === ayah.number);
-    
-    if (isBookmarked) {
-      newBookmarks = bookmarks.filter(b => b.number !== ayah.number);
-    } else {
-      newBookmarks = [...bookmarks, { ...ayah, surahNumber }];
-    }
-    
-    setBookmarks(newBookmarks);
-    localStorage.setItem('quran-bookmarks', JSON.stringify(newBookmarks));
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Player Steuerung */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur p-4 border-b flex flex-wrap items-center justify-between gap-4 shadow-sm">
-        <div className="flex items-center gap-4">
-          <select 
-            className="p-2 border rounded-lg text-sm bg-slate-50"
-            value={selectedQari}
-            onChange={(e) => setSelectedQari(e.target.value)}
-          >
-            {qaris.map(q => <option key={q.id} value={q.id}>{q.name}</option>)}
-          </select>
-          
-          <button 
-            onClick={() => togglePlay(0, true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#0369A1] text-white rounded-full hover:bg-[#075985] transition-all"
-          >
-            {playAll && isPlaying ? <Pause size={18}/> : <Play size={18}/>}
-            <span className="font-medium">Ganze Sure abspielen</span>
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 text-slate-500 italic text-sm">
-          <Volume2 size={16}/> Vers {currentAyahIndex + 1} wird abgespielt...
-        </div>
-      </div>
-
-      {/* Vers Liste */}
-      <div className="space-y-4 px-2">
-        {ayahs.map((ayah, index) => (
-          <div 
-            key={ayah.number} 
-            className={`p-6 rounded-2xl border transition-all ${currentAyahIndex === index && isPlaying ? 'border-[#D4A574] bg-gold-50/20 shadow-md' : 'border-slate-100 bg-white hover:border-slate-200'}`}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <span className="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-full text-xs font-bold text-slate-500">
-                {index + 1}
-              </span>
-              
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => toggleBookmark(ayah)}
-                  className="p-2 hover:bg-slate-50 rounded-full text-[#D4A574]"
-                >
-                  {bookmarks.some(b => b.number === ayah.number) ? <BookmarkCheck fill="currentColor"/> : <Bookmark/>}
-                </button>
-                <button 
-                  onClick={() => togglePlay(index, false)}
-                  className="p-2 bg-slate-100 hover:bg-[#D4A574] hover:text-white rounded-full transition-colors"
-                >
-                  {currentAyahIndex === index && isPlaying ? <Pause size={20}/> : <Play size={20}/>}
-                </button>
-              </div>
-            </div>
-
-            <p className="text-right text-3xl font-serif leading-loose mb-4 text-slate-800" dir="rtl">
-              {ayah.text}
-            </p>
-            <p className="text-slate-600 leading-relaxed italic border-l-2 border-[#D4A574]/30 pl-4">
-              {ayah.translation}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default QuranAudioPlayer;
-const CACHE_NAME = 'licht-des-islam-v1';
-const assets = [
-  '/',
-  '/index.html',
-  '/static/js/main.chunk.js',
-  '/static/js/bundle.js',
-  '/manifest.json'
-];
-
-self.addEventListener('install', evt => {
-  evt.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      cache.addAll(assets);
-    })
-  );
-});
-
-self.addEventListener('fetch', evt => {
-  evt.respondWith(
-    caches.match(evt.request).then(rec => {
-      return rec || fetch(evt.request);
-    })
-  );
-});
-
-import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, MapPin, Bookmark, Volume2, Globe } from 'lucide-react';
-
-const IslamicApp = () => {
-  // States für Gebetszeiten
-  const [timings, setTimings] = useState(null);
-  const [location, setLocation] = useState("Standort wird ermittelt...");
-  
-  // States für Quran & Audio
-  const [ayahs, setAyahs] = useState([]); // Hier kommen die Verse rein
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isPlayAll, setIsPlayAll] = useState(false);
-  const [selectedQari, setSelectedQari] = useState('ar.abdulsamad');
-  const audioRef = useRef(new Audio());
-
-  const qaris = [
-    { id: 'ar.abdulsamad', name: 'Abdul Samad' },
-    { id: 'ar.abdulbasitmurattal', name: 'Abdul Basit' },
-    { id: 'ar.as-sudais', name: 'Abdurrahman As-Sudais' }
-  ];
-
-  // --- PART 1: GEBETSZEITEN AUTOMATIK ---
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        // Europa Check für Methode (MWL = 3, sonst ISNA = 2)
-        const method = (latitude > 35 && latitude < 70) ? 3 : 2;
-        
-        try {
-          const res = await fetch(
-            `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=${method}&higherLatitudeMethod=3`
-          );
-          const json = await res.json();
-          setTimings(json.data.timings);
-          setLocation(json.data.meta.timezone);
-        } catch (e) { console.error("API Fehler"); }
-      });
-    }
-    
-    // Service Worker Registrierung
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').then(() => console.log("Offline bereit!"));
-    }
-  }, []);
-
-  // --- PART 2: AUDIO LOGIK (EINZELN & ALLES) ---
-  useEffect(() => {
-    const audio = audioRef.current;
-    const handleNext = () => {
-      if (isPlayAll && currentIndex < ayahs.length - 1) {
-        setCurrentIndex(prev => prev + 1);
-      } else {
-        setIsPlaying(false);
-      }
-    };
-    audio.addEventListener('ended', handleNext);
-    return () => audio.removeEventListener('ended', handleNext);
-  }, [isPlayAll, currentIndex, ayahs]);
-
-  useEffect(() => {
-    if (isPlaying && ayahs[currentIndex]) {
-      audioRef.current.src = `https://cdn.islamic.network/quran/audio/128/${selectedQari}/${ayahs[currentIndex].number}.mp3`;
-      audioRef.current.play();
-    }
-  }, [currentIndex, isPlaying, selectedQari]);
-
-  const toggleAudio = (index, playAllMode) => {
-    setIsPlayAll(playAllMode);
-    if (index === currentIndex && isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      setCurrentIndex(index);
-      setIsPlaying(true);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-50 font-sans pb-20">
-      {/* HEADER & LOGO */}
-      <header className="bg-[#0369A1] text-white p-6 text-center shadow-lg">
-        <img src="/mein-logo.png" alt="Licht des Islam" className="h-20 mx-auto mb-2" />
-        <h1 className="text-xl font-serif tracking-widest uppercase">Licht des Islam</h1>
-      </header>
-
-      <main className="max-w-4xl mx-auto p-4 space-y-8">
-        
-        {/* GEBETSZEITEN TABELLE */}
-        <section className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="bg-[#D4A574] p-4 text-white flex justify-between items-center">
-            <h2 className="font-bold">Gebetszeiten</h2>
-            <div className="flex items-center text-xs opacity-90">
-              <MapPin size={14} className="mr-1"/> {location}
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-6 divide-x divide-y md:divide-y-0">
-            {timings && Object.entries({
-              Fajr: timings.Fajr,
-              Sunrise: timings.Sunrise,
-              Dhuhr: timings.Dhuhr,
-              Asr: timings.Asr,
-              Maghrib: timings.Maghrib,
-              Isha: timings.Isha
-            }).map(([name, time]) => (
-              <div key={name} className="p-4 text-center">
-                <p className="text-xs text-slate-400 uppercase">{name}</p>
-                <p className="text-lg font-bold text-[#0369A1]">{time}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* QURAN AUDIO PLAYER */}
-        <section className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border shadow-sm">
-            <select 
-              className="bg-slate-100 p-2 rounded-lg text-sm outline-none"
-              value={selectedQari}
-              onChange={(e) => setSelectedQari(e.target.value)}
-            >
-              {qaris.map(q => <option key={q.id} value={q.id}>{q.name}</option>)}
-            </select>
-
-            <button 
-              onClick={() => toggleAudio(0, true)}
-              className="bg-[#0369A1] text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-[#025a8a]"
-            >
-              {isPlayAll && isPlaying ? <Pause size={18}/> : <Play size={18}/>}
-              Alles abspielen
-            </button>
-          </div>
-
-          {/* VERSE LISTE */}
-          <div className="grid gap-4">
-            {ayahs.map((ayah, index) => (
-              <div key={index} className="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col gap-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-slate-300">VERS {index + 1}</span>
-                  <div className="flex gap-2">
-                    <button className="text-[#D4A574] p-2 hover:bg-slate-50 rounded-full"><Bookmark size={20}/></button>
-                    <button 
-                      onClick={() => toggleAudio(index, false)}
-                      className="p-2 bg-slate-100 rounded-full text-[#0369A1]"
-                    >
-                      {currentIndex === index && isPlaying && !isPlayAll ? <Pause size={20}/> : <Play size={20}/>}
-                    </button>
-                  </div>
-                </div>
-                <p className="text-right text-2xl font-serif text-slate-800" dir="rtl">{ayah.text}</p>
-                <p className="text-slate-500 text-sm italic">{ayah.translation}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-    </div>
-  );
-};
-
-export default IslamicApp;
-Agent
-
-Website
-
-Detaillierte Dokumentation: Islamische Gebetszeiten & Quran Webseite
-
-Übersicht des Projekts
-
-Ich habe eine vollständige Webseite für islamische Gebetszeiten und den Quran erstellt. Die Webseite hat zwei Hauptfunktionen: eine Gebetszeiten-Suche für jede Stadt weltweit und einen kompletten, durchsuchbaren Quran mit deutscher Übersetzung.
-
-1. Projektinitialisierung
-
-Was wurde gemacht:
-
-Projekt erstellt: Ich habe ein neues Webprojekt namens "prayer-times-app" initialisiertTechnologie-Stack: React 19 + Tailwind CSS 4 + shadcn/ui KomponentenGrundstruktur: Das Projekt wurde mit einer modernen Frontend-Architektur aufgebaut, die es einfach macht, neue Features hinzuzufügen
-
-Warum das wichtig ist:
-
-React ist ein JavaScript-Framework, das es ermöglicht, interaktive Benutzeroberflächen zu erstellen. Tailwind CSS ist ein CSS-Framework für schnelle Styling. shadcn/ui bietet vorgefertigte, schöne UI-Komponenten.
-
-2. Design & Branding
-
-Was wurde gemacht:
-
-Design-Stil gewählt: "Moderne Minimalismus mit Islamischer Eleganz"Farbpalette definiert:Tiefes Indigoblau (#0369A1) - für VertrauenswürdigkeitWarmem Gold (#D4A574) - für spirituelle WärmeReines Weiß - für KlarheitDunkle Grautöne - für das moderne InterfaceDein Logo integriert: "Licht des Islam" Logo wurde unter dem Header-Text zentriert platziertTypografie: Playfair Display für Überschriften, Lato für Body-Text
-
-Warum das wichtig ist:
-
-Ein konsistentes Design schafft Vertrauen und macht die Webseite professionell. Die Farbwahl spiegelt islamische Werte wider und macht die Seite angenehm zu nutzen.
-
-3. Gebetszeiten-Seite (Hauptseite)
-
-Was wurde gemacht:
-
-3.1 Suchfunktion
-
-Stadtsuche implementiert: Nutzer können jede Stadt weltweit eingeben (z.B. "Berlin", "Istanbul", "Dubai")Automatische Standorterkennung: Die Webseite versucht, den Standort des Nutzers zu ermitteln und zeigt automatisch die Gebetszeiten für die nächste Stadt anSuchfeld-Design: Ein großes, benutzerfreundliches Suchfeld mit Platzhalter-Text
-
-3.2 Gebetszeiten-Anzeige
-
-Die Webseite zeigt fünf Hauptgebetszeiten an:
-
-Fajr (الفجر) - Morgengebet vor SonnenaufgangDhuhr (الظهر) - MittagsgebetAsr (العصر) - NachmittagsgebetMaghrib (المغرب) - SonnenuntergangsgebetIsha (العشاء) - Nachtgebet
-
-Zusätzlich werden auch Sunrise (Sonnenaufgang) und Sunset (Sonnenuntergang) angezeigt.
-
-3.3 Countdown-Funktion
-
-Nächstes Gebet Countdown: Eine große grüne Karte zeigt das nächste Gebet und die verbleibende Zeit in Stunden und Minuten anLive-Update: Der Countdown aktualisiert sich automatisch jede Sekunde
-
-3.4 API-Integration
-
-Aladhan API: Ich nutze die Aladhan-API (https://aladhan.com/api) zur Berechnung der GebetszeitenISNA-Methode: Die API nutzt die ISNA-Berechnungsmethode (Method 15), die die gleichen Ergebnisse wie Athan Pro liefertNominatim API: Für die Standortsuche nutze ich die Nominatim-API, die Stadtnamen in Koordinaten umwandelt
-
-Warum das wichtig ist:
-
-Die Gebetszeiten müssen präzise sein, da Muslime sich darauf verlassen, um ihre Gebete zur richtigen Zeit zu verrichten. Die ISNA-Methode ist eine der am weitesten verbreiteten Methoden und wird von vielen islamischen Organisationen verwendet.
-
-4. Quran-Seite (Zweite Hauptfunktion)
-
-Was wurde gemacht:
-
-4.1 Suren-Liste (Linke Seite)
-
-Alle 114 Suren aufgelistet: Jede Sure (Kapitel) des Quran ist in einer durchsuchbaren Liste auf der linken Seite aufgeführtSuchfunktion: Nutzer können Suren nach Name, englischem Namen oder Nummer suchen (z.B. "Al-Faatiha", "Baqarah", "1")Interaktive Auswahl: Ein Klick auf eine Sure lädt die Verse dieser Sure
-
-4.2 Vers-Anzeige (Rechte Seite)
-
-Wenn ein Nutzer auf eine Sure klickt, werden alle Verse dieser Sure angezeigt mit:
-
-Arabischer Text: Der originale Quran-Text in arabischer SchriftDeutsche Übersetzung: Die Bubenheim & Elyas Übersetzung auf DeutschVers-Nummern: Jeder Vers ist nummeriert (z.B. Vers 1, Vers 2, etc.)Visuelle Struktur: Arabischer Text in einer dunklen Box, deutsche Übersetzung in einer helleren Box
-
-4.3 Navigation
-
-Vorherige/Nächste Buttons: Nutzer können zwischen Suren navigierenSure-Anzeige: "Sure 1 / 114" zeigt die aktuelle PositionSuchfunktion: Nutzer können schnell zu einer bestimmten Sure springen
-
-4.4 API-Integration
-
-alquran.cloud API: Ich nutze die alquran.cloud-API (https://alquran.cloud/api) für den Quran-InhaltMehrsprachige Unterstützung: Die API bietet arabische Texte und deutsche ÜbersetzungenSpezifische Editionen:quran-simple für den arabischen Textde.bubenheim für die deutsche Übersetzung (Bubenheim & Elyas)
-
-Warum das wichtig ist:
-
-Der Quran ist das heiligste Buch im Islam. Eine genaue, gut formatierte Darstellung mit deutscher Übersetzung macht es einfach für deutschsprachige Muslime, den Quran zu lesen und zu verstehen.
-
-5. Technische Implementierung
-
-5.1 Frontend-Struktur
-
-client/
-
-├── src/
-
-│ ├── pages/
-
-│ │ ├── Home.tsx (Gebetszeiten-Seite)
-
-│ │ ├── Quran.tsx (Quran-Seite)
-
-│ │ └── NotFound.tsx (404-Seite)
-
-│ ├── components/ (Wiederverwendbare UI-Komponenten)
-
-│ ├── App.tsx (Hauptanwendung mit Navigation)
-
-│ ├── index.css (Globale Styles)
-
-│ └── main.tsx (React Entry Point)
-
-└── index.html (HTML-Template)
-
-5.2 Navigation
-
-Tab-Navigation: Oben auf der Seite gibt es zwei Tabs: "Gebetszeiten" und "Quran"Wouter Router: Ich nutze das Wouter-Routing-Framework für Client-seitige Navigation (keine Seiten-Neuladen)
-
-5.3 Responsive Design
-
-Mobile-First: Die Webseite funktioniert auf allen Geräten:Smartphones (kleine Bildschirme)Tablets (mittlere Bildschirme)Desktop-Computer (große Bildschirme)Grid-Layout: Die Quran-Seite nutzt ein 4-Spalten-Grid, das sich auf kleineren Bildschirmen automatisch anpasst
-
-5.4 Fehlerbehandlung
-
-Fehler-Meldungen: Wenn APIs nicht erreichbar sind oder Fehler auftreten, zeigt die Seite benutzerfreundliche FehlermeldungenLoading-States: Während Daten geladen werden, zeigt die Seite einen Lade-Spinner
-
-6. Branding & Logo-Integration
-
-Was wurde gemacht:
-
-Logo-Platzierung: Dein "Licht des Islam" Logo wurde unter dem Titel "Gebetszeiten" und dem Untertitel "Genaue Gebetszeiten für deine Stadt" zentriert platziertLogo-Größe: Das Logo ist responsive und passt sich an die Bildschirmgröße anDesign-Konsistenz: Das Logo ist in das Gesamtdesign integriert und wirkt professionell
-
-7. Problembehebung & Verbesserungen
-
-Was wurde behoben:
-
-Problem 1: Gebetszeiten-Genauigkeit
-
-Anfangsproblem: Die er
-
-Agent
-
-Website
-
-Detaillierte Dokumentation: Islamische Gebetszeiten & Quran Webseite
-
-Übersicht des Projekts
-
-Ich habe eine vollständige Webseite für islamische Gebetszeiten und den Quran erstellt. Die Webseite hat zwei Hauptfunktionen: eine Gebetszeiten-Suche für jede Stadt weltweit und einen kompletten, durchsuchbaren Quran mit deutscher Übersetzung.
-
-1. Projektinitialisierung
-
-Was wurde gemacht:
-
-Projekt erstellt: Ich habe ein neues Webprojekt namens "prayer-times-app" initialisiertTechnologie-Stack: React 19 + Tailwind CSS 4 + shadcn/ui KomponentenGrundstruktur: Das Projekt wurde mit einer modernen Frontend-Architektur aufgebaut, die es einfach macht, neue Features hinzuzufügen
-
-Warum das wichtig ist:
-
-React ist ein JavaScript-Framework, das es ermöglicht, interaktive Benutzeroberflächen zu erstellen. Tailwind CSS ist ein CSS-Framework für schnelle Styling. shadcn/ui bietet vorgefertigte, schöne UI-Komponenten.
-
-2. Design & Branding
-
-Was wurde gemacht:
-
-Design-Stil gewählt: "Moderne Minimalismus mit Islamischer Eleganz"Farbpalette definiert:Tiefes Indigoblau (#0369A1) - für VertrauenswürdigkeitWarmem Gold (#D4A574) - für spirituelle WärmeReines Weiß - für KlarheitDunkle Grautöne - für das moderne InterfaceDein Logo integriert: "Licht des Islam" Logo wurde unter dem Header-Text zentriert platziertTypografie: Playfair Display für Überschriften, Lato für Body-Text
-
-Warum das wichtig ist:
-
-Ein konsistentes Design schafft Vertrauen und macht die Webseite professionell. Die Farbwahl spiegelt islamische Werte wider und macht die Seite angenehm zu nutzen.
-
-3. Gebetszeiten-Seite (Hauptseite)
-
-Was wurde gemacht:
-
-3.1 Suchfunktion
-
-Stadtsuche implementiert: Nutzer können jede Stadt weltweit eingeben (z.B. "Berlin", "Istanbul", "Dubai")Automatische Standorterkennung: Die Webseite versucht, den Standort des Nutzers zu ermitteln und zeigt automatisch die Gebetszeiten für die nächste Stadt anSuchfeld-Design: Ein großes, benutzerfreundliches Suchfeld mit Platzhalter-Text
-
-3.2 Gebetszeiten-Anzeige
-
-Die Webseite zeigt fünf Hauptgebetszeiten an:
-
-Fajr (الفجر) - Morgengebet vor SonnenaufgangDhuhr (الظهر) - MittagsgebetAsr (العصر) - NachmittagsgebetMaghrib (المغرب) - SonnenuntergangsgebetIsha (العشاء) - Nachtgebet
-
-Zusätzlich werden auch Sunrise (Sonnenaufgang) und Sunset (Sonnenuntergang) angezeigt.
-
-3.3 Countdown-Funktion
-
-Nächstes Gebet Countdown: Eine große grüne Karte zeigt das nächste Gebet und die verbleibende Zeit in Stunden und Minuten anLive-Update: Der Countdown aktualisiert sich automatisch jede Sekunde
-
-3.4 API-Integration
-
-Aladhan API: Ich nutze die Aladhan-API (https://aladhan.com/api) zur Berechnung der GebetszeitenISNA-Methode: Die API nutzt die ISNA-Berechnungsmethode (Method 15), die die gleichen Ergebnisse wie Athan Pro liefertNominatim API: Für die Standortsuche nutze ich die Nominatim-API, die Stadtnamen in Koordinaten umwandelt
-
-Warum das wichtig ist:
-
-Die Gebetszeiten müssen präzise sein, da Muslime sich darauf verlassen, um ihre Gebete zur richtigen Zeit zu verrichten. Die ISNA-Methode ist eine der am weitesten verbreiteten Methoden und wird von vielen islamischen Organisationen verwendet.
-
-4. Quran-Seite (Zweite Hauptfunktion)
-
-Was wurde gemacht:
-
-4.1 Suren-Liste (Linke Seite)
-
-Alle 114 Suren aufgelistet: Jede Sure (Kapitel) des Quran ist in einer durchsuchbaren Liste auf der linken Seite aufgeführtSuchfunktion: Nutzer können Suren nach Name, englischem Namen oder Nummer suchen (z.B. "Al-Faatiha", "Baqarah", "1")Interaktive Auswahl: Ein Klick auf eine Sure lädt die Verse dieser Sure
-
-4.2 Vers-Anzeige (Rechte Seite)
-
-Wenn ein Nutzer auf eine Sure klickt, werden alle Verse dieser Sure angezeigt mit:
-
-Arabischer Text: Der originale Quran-Text in arabischer SchriftDeutsche Übersetzung: Die Bubenheim & Elyas Übersetzung auf DeutschVers-Nummern: Jeder Vers ist nummeriert (z.B. Vers 1, Vers 2, etc.)Visuelle Struktur: Arabischer Text in einer dunklen Box, deutsche Übersetzung in einer helleren Box
-
-4.3 Navigation
-
-Vorherige/Nächste Buttons: Nutzer können zwischen Suren navigierenSure-Anzeige: "Sure 1 / 114" zeigt die aktuelle PositionSuchfunktion: Nutzer können schnell zu einer bestimmten Sure springen
-
-4.4 API-Integration
-
-alquran.cloud API: Ich nutze die alquran.cloud-API (https://alquran.cloud/api) für den Quran-InhaltMehrsprachige Unterstützung: Die API bietet arabische Texte und deutsche ÜbersetzungenSpezifische Editionen:quran-simple für den arabischen Textde.bubenheim für die deutsche Übersetzung (Bubenheim & Elyas)
-
-Warum das wichtig ist:
-
-Der Quran ist das heiligste Buch im Islam. Eine genaue, gut formatierte Darstellung mit deutscher Übersetzung macht es einfach für deutschsprachige Muslime, den Quran zu lesen und zu verstehen.
-
-5. Technische Implementierung
-
-5.1 Frontend-Struktur
-
-client/
-
-├── src/
-
-│ ├── pages/
-
-│ │ ├── Home.tsx (Gebetszeiten-Seite)
-
-│ │ ├── Quran.tsx (Quran-Seite)
-
-│ │ └── NotFound.tsx (404-Seite)
-
-│ ├── components/ (Wiederverwendbare UI-Komponenten)
-
-│ ├── App.tsx (Hauptanwendung mit Navigation)
-
-│ ├── index.css (Globale Styles)
-
-│ └── main.tsx (React Entry Point)
-
-└── index.html (HTML-Template)
-
-5.2 Navigation
-
-Tab-Navigation: Oben auf der Seite gibt es zwei Tabs: "Gebetszeiten" und "Quran"Wouter Router: Ich nutze das Wouter-Routing-Framework für Client-seitige Navigation (keine Seiten-Neuladen)
-
-5.3 Responsive Design
-
-Mobile-First: Die Webseite funktioniert auf allen Geräten:Smartphones (kleine Bildschirme)Tablets (mittlere Bildschirme)Desktop-Computer (große Bildschirme)Grid-Layout: Die Quran-Seite nutzt ein 4-Spalten-Grid, das sich auf kleineren Bildschirmen automatisch anpasst
-
-5.4 Fehlerbehandlung
-
-Fehler-Meldungen: Wenn APIs nicht erreichbar sind oder Fehler auftreten, zeigt die Seite benutzerfreundliche FehlermeldungenLoading-States: Während Daten geladen werden, zeigt die Seite einen Lade-Spinner
-
-6. Branding & Logo-Integration
-
-Was wurde gemacht:
-
-Logo-Platzierung: Dein "Licht des Islam" Logo wurde unter dem Titel "Gebetszeiten" und dem Untertitel "Genaue Gebetszeiten für deine Stadt" zentriert platziertLogo-Größe: Das Logo ist responsive und passt sich an die Bildschirmgröße anDesign-Konsistenz: Das Logo ist in das Gesamtdesign integriert und wirkt professionell
-
-7. Problembehebung & Verbesserungen
-
-Was wurde behoben:
-
-Problem 1: Gebetszeiten-Genauigkeit
-
-Anfangsproblem: Die er
-
-Agent
-
-Website
-
-Detaillierte Dokumentation: Islamische Gebetszeiten & Quran Webseite
-
-Übersicht des Projekts
-
-Ich habe eine vollständige Webseite für islamische Gebetszeiten und den Quran erstellt. Die Webseite hat zwei Hauptfunktionen: eine Gebetszeiten-Suche für jede Stadt weltweit und einen kompletten, durchsuchbaren Quran mit deutscher Übersetzung.
-
-1. Projektinitialisierung
-
-Was wurde gemacht:
-
-Projekt erstellt: Ich habe ein neues Webprojekt namens "prayer-times-app" initialisiertTechnologie-Stack: React 19 + Tailwind CSS 4 + shadcn/ui KomponentenGrundstruktur: Das Projekt wurde mit einer modernen Frontend-Architektur aufgebaut, die es einfach macht, neue Features hinzuzufügen
-
-Warum das wichtig ist:
-
-React ist ein JavaScript-Framework, das es ermöglicht, interaktive Benutzeroberflächen zu erstellen. Tailwind CSS ist ein CSS-Framework für schnelle Styling. shadcn/ui bietet vorgefertigte, schöne UI-Komponenten.
-
-2. Design & Branding
-
-Was wurde gemacht:
-
-Design-Stil gewählt: "Moderne Minimalismus mit Islamischer Eleganz"Farbpalette definiert:Tiefes Indigoblau (#0369A1) - für VertrauenswürdigkeitWarmem Gold (#D4A574) - für spirituelle WärmeReines Weiß - für KlarheitDunkle Grautöne - für das moderne InterfaceDein Logo integriert: "Licht des Islam" Logo wurde unter dem Header-Text zentriert platziertTypografie: Playfair Display für Überschriften, Lato für Body-Text
-
-Warum das wichtig ist:
-
-Ein konsistentes Design schafft Vertrauen und macht die Webseite professionell. Die Farbwahl spiegelt islamische Werte wider und macht die Seite angenehm zu nutzen.
-
-3. Gebetszeiten-Seite (Hauptseite)
-
-Was wurde gemacht:
-
-3.1 Suchfunktion
-
-Stadtsuche implementiert: Nutzer können jede Stadt weltweit eingeben (z.B. "Berlin", "Istanbul", "Dubai")Automatische Standorterkennung: Die Webseite versucht, den Standort des Nutzers zu ermitteln und zeigt automatisch die Gebetszeiten für die nächste Stadt anSuchfeld-Design: Ein großes, benutzerfreundliches Suchfeld mit Platzhalter-Text
-
-3.2 Gebetszeiten-Anzeige
-
-Die Webseite zeigt fünf Hauptgebetszeiten an:
-
-Fajr (الفجر) - Morgengebet vor SonnenaufgangDhuhr (الظهر) - MittagsgebetAsr (العصر) - NachmittagsgebetMaghrib (المغرب) - SonnenuntergangsgebetIsha (العشاء) - Nachtgebet
-
-Zusätzlich werden auch Sunrise (Sonnenaufgang) und Sunset (Sonnenuntergang) angezeigt.
-
-3.3 Countdown-Funktion
-
-Nächstes Gebet Countdown: Eine große grüne Karte zeigt das nächste Gebet und die verbleibende Zeit in Stunden und Minuten anLive-Update: Der Countdown aktualisiert sich automatisch jede Sekunde
-
-3.4 API-Integration
-
-Aladhan API: Ich nutze die Aladhan-API (https://aladhan.com/api) zur Berechnung der GebetszeitenISNA-Methode: Die API nutzt die ISNA-Berechnungsmethode (Method 15), die die gleichen Ergebnisse wie Athan Pro liefertNominatim API: Für die Standortsuche nutze ich die Nominatim-API, die Stadtnamen in Koordinaten umwandelt
-
-Warum das wichtig ist:
-
-Die Gebetszeiten müssen präzise sein, da Muslime sich darauf verlassen, um ihre Gebete zur richtigen Zeit zu verrichten. Die ISNA-Methode ist eine der am weitesten verbreiteten Methoden und wird von vielen islamischen Organisationen verwendet.
-
-4. Quran-Seite (Zweite Hauptfunktion)
-
-Was wurde gemacht:
-
-4.1 Suren-Liste (Linke Seite)
-
-Alle 114 Suren aufgelistet: Jede Sure (Kapitel) des Quran ist in einer durchsuchbaren Liste auf der linken Seite aufgeführtSuchfunktion: Nutzer können Suren nach Name, englischem Namen oder Nummer suchen (z.B. "Al-Faatiha", "Baqarah", "1")Interaktive Auswahl: Ein Klick auf eine Sure lädt die Verse dieser Sure
-
-4.2 Vers-Anzeige (Rechte Seite)
-
-Wenn ein Nutzer auf eine Sure klickt, werden alle Verse dieser Sure angezeigt mit:
-
-Arabischer Text: Der originale Quran-Text in arabischer SchriftDeutsche Übersetzung: Die Bubenheim & Elyas Übersetzung auf DeutschVers-Nummern: Jeder Vers ist nummeriert (z.B. Vers 1, Vers 2, etc.)Visuelle Struktur: Arabischer Text in einer dunklen Box, deutsche Übersetzung in einer helleren Box
-
-4.3 Navigation
-
-Vorherige/Nächste Buttons: Nutzer können zwischen Suren navigierenSure-Anzeige: "Sure 1 / 114" zeigt die aktuelle PositionSuchfunktion: Nutzer können schnell zu einer bestimmten Sure springen
-
-4.4 API-Integration
-
-alquran.cloud API: Ich nutze die alquran.cloud-API (https://alquran.cloud/api) für den Quran-InhaltMehrsprachige Unterstützung: Die API bietet arabische Texte und deutsche ÜbersetzungenSpezifische Editionen:quran-simple für den arabischen Textde.bubenheim für die deutsche Übersetzung (Bubenheim & Elyas)
-
-Warum das wichtig ist:
-
-Der Quran ist das heiligste Buch im Islam. Eine genaue, gut formatierte Darstellung mit deutscher Übersetzung macht es einfach für deutschsprachige Muslime, den Quran zu lesen und zu verstehen.
-
-5. Technische Implementierung
-
-5.1 Frontend-Struktur
-
-client/
-
-├── src/
-
-│ ├── pages/
-
-│ │ ├── Home.tsx (Gebetszeiten-Seite)
-
-│ │ ├── Quran.tsx (Quran-Seite)
-
-│ │ └── NotFound.tsx (404-Seite)
-
-│ ├── components/ (Wiederverwendbare UI-Komponenten)
-
-│ ├── App.tsx (Hauptanwendung mit Navigation)
-
-│ ├── index.css (Globale Styles)
-
-│ └── main.tsx (React Entry Point)
-
-└── index.html (HTML-Template)
-
-5.2 Navigation
-
-Tab-Navigation: Oben auf der Seite gibt es zwei Tabs: "Gebetszeiten" und "Quran"Wouter Router: Ich nutze das Wouter-Routing-Framework für Client-seitige Navigation (keine Seiten-Neuladen)
-
-5.3 Responsive Design
-
-Mobile-First: Die Webseite funktioniert auf allen Geräten:Smartphones (kleine Bildschirme)Tablets (mittlere Bildschirme)Desktop-Computer (große Bildschirme)Grid-Layout: Die Quran-Seite nutzt ein 4-Spalten-Grid, das sich auf kleineren Bildschirmen automatisch anpasst
-
-5.4 Fehlerbehandlung
-
-Fehler-Meldungen: Wenn APIs nicht erreichbar sind oder Fehler auftreten, zeigt die Seite benutzerfreundliche FehlermeldungenLoading-States: Während Daten geladen werden, zeigt die Seite einen Lade-Spinner
-
-6. Branding & Logo-Integration
-
-Was wurde gemacht:
-
-Logo-Platzierung: Dein "Licht des Islam" Logo wurde unter dem Titel "Gebetszeiten" und dem Untertitel "Genaue Gebetszeiten für deine Stadt" zentriert platziertLogo-Größe: Das Logo ist responsive und passt sich an die Bildschirmgröße anDesign-Konsistenz: Das Logo ist in das Gesamtdesign integriert und wirkt professionell
-
-7. Problembehebung & Verbesserungen
-
-Was wurde behoben:
-
-Problem 1: Gebetszeiten-Genauigkeit
-
-Anfangsproblem: Die er
+</html>
