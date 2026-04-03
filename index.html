@@ -4,42 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Islam App</title>
+
 <style>
 body {
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-  text-align: center;
   margin: 0;
-}
-header {
-  background: #16a34a;
-  padding: 15px;
-  font-size: 20px;
-}
-.card {
-  background: #1e293b;
-  margin: 15px;
-  padding: 15px;
-  border-radius: 10px;
-}
-button {
-  background: #16a34a;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f172a, #020617);
   color: white;
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  background: rgba(22,163,74,0.8);
+  backdrop-filter: blur(10px);
+}
+
+/* Cards */
+.container {
+  padding: 10px;
+}
+
+.card {
+  background: rgba(30,41,59,0.7);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  padding: 15px;
+  margin: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+/* Titles */
+h2 {
+  margin-top: 0;
+}
+
+/* Buttons */
+button {
+  background: linear-gradient(45deg, #16a34a, #22c55e);
   border: none;
   padding: 10px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
   margin-top: 10px;
-  border-radius: 5px;
+  width: 100%;
+}
+
+/* Select */
+select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 5px;
+}
+
+/* Quran Text */
+#quranText {
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+/* Smooth animation */
+.card {
+  transition: transform 0.2s;
+}
+.card:hover {
+  transform: scale(1.02);
 }
 </style>
+
 </head>
 
 <body>
 
-<header>🕌 Gebetszeiten & Quran</header>
+<header>🕌 Islam App</header>
+
+<div class="container">
 
 <div class="card">
-  <h2>📍 Dein Standort</h2>
+  <h2>📍 Standort</h2>
   <p id="location">Lädt...</p>
 </div>
 
@@ -51,12 +101,13 @@ button {
 <div class="card">
   <h2>📖 Quran</h2>
   <select id="surahSelect"></select>
-  <button onclick="loadSurah()">Laden</button>
-  <div id="quranText" style="margin-top:10px;"></div>
+  <button onclick="loadSurah()">📥 Laden</button>
+  <div id="quranText"></div>
+</div>
+
 </div>
 
 <script>
-// Standort holen
 navigator.geolocation.getCurrentPosition(pos => {
   let lat = pos.coords.latitude;
   let lon = pos.coords.longitude;
@@ -64,22 +115,20 @@ navigator.geolocation.getCurrentPosition(pos => {
   document.getElementById("location").innerText =
     "Lat: " + lat.toFixed(2) + " | Lon: " + lon.toFixed(2);
 
-  // Gebetszeiten API
   fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
     .then(res => res.json())
     .then(data => {
       let t = data.data.timings;
       document.getElementById("prayerTimes").innerHTML = `
-        Fajr: ${t.Fajr}<br>
-        Dhuhr: ${t.Dhuhr}<br>
-        Asr: ${t.Asr}<br>
-        Maghrib: ${t.Maghrib}<br>
-        Isha: ${t.Isha}
+        🌅 Fajr: ${t.Fajr}<br>
+        ☀️ Dhuhr: ${t.Dhuhr}<br>
+        🌤 Asr: ${t.Asr}<br>
+        🌇 Maghrib: ${t.Maghrib}<br>
+        🌙 Isha: ${t.Isha}
       `;
     });
 });
 
-// Surah Liste laden
 fetch("https://api.alquran.cloud/v1/surah")
   .then(res => res.json())
   .then(data => {
@@ -92,7 +141,6 @@ fetch("https://api.alquran.cloud/v1/surah")
     });
   });
 
-// Quran laden
 function loadSurah() {
   let num = document.getElementById("surahSelect").value;
   fetch(`https://api.alquran.cloud/v1/surah/${num}/de.asad`)
