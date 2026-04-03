@@ -4,630 +4,319 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Licht des Islam</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 /* --- GLOBAL STYLES --- */
+:root {
+  --gold: #FFD700;
+  --glass: rgba(255, 255, 255, 0.1);
+  --bg-dark: #0A0F29;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   background:
-    radial-gradient(circle at 30% 20%, rgba(138, 43, 226, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, #0A0F29 0%, #1A1F39 100%);
+    radial-gradient(circle at 30% 20%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, var(--bg-dark) 0%, #1A1F39 100%);
   color: #FFFFFF;
   margin: 0;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
 }
 
-/* --- HEADER --- */
 header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 header h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin: 0;
-  color: #FFD700;
-}
-header img {
-  margin-top: 10px;
-  max-width: 120px;
+  color: var(--gold);
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 /* --- SEARCH BAR --- */
 #searchContainer {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   display: flex;
   margin-bottom: 20px;
 }
 #searchInput {
   flex: 1;
-  padding: 10px 15px;
+  padding: 12px 20px;
   border-radius: 25px 0 0 25px;
   border: none;
-  outline: none;
+  background: white;
   font-size: 16px;
 }
 #searchBtn {
-  padding: 10px;
-  background-color: #FFD700;
+  padding: 12px 20px;
+  background-color: var(--gold);
   border: none;
   border-radius: 0 25px 25px 0;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* --- GRID CARDS --- */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 420px;
-}
-.card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 215, 0, 0.1);
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
-  transition: transform 0.2s;
-}
-.card:hover {
-  transform: scale(1.03);
-}
-.icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 15px;
-}
-.prayer-title {
-  font-size: 1.2rem;
   font-weight: bold;
-  color: #FFD700;
-  margin-bottom: 5px;
-}
-.arabic {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.6);
-  margin-bottom: 10px;
-}
-.time {
-  font-size: 1.8rem;
-  margin-bottom: 5px;
-}
-.description {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
 }
 
-/* --- NEXT PRAYER COUNTDOWN --- */
+/* --- COUNTDOWN --- */
 #nextPrayer {
-  background: linear-gradient(90deg, #22c55e, #16a34a);
+  background: linear-gradient(90deg, #10b981, #059669);
   border-radius: 20px;
   padding: 20px;
   text-align: center;
   width: 100%;
   max-width: 420px;
   margin-bottom: 20px;
-  font-size: 1.2rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
+
+/* --- GRID CARDS --- */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  width: 100%;
+  max-width: 420px;
+}
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  border-radius: 20px;
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.card:hover { transform: translateY(-5px); }
+.prayer-title { font-weight: 600; color: var(--gold); margin-bottom: 2px; }
+.arabic { font-size: 1.1rem; opacity: 0.8; margin-bottom: 8px; }
+.time { font-size: 1.6rem; font-weight: bold; }
 
 /* --- QURAN AREA --- */
 #quranContainer {
   width: 100%;
   max-width: 420px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
+  background: var(--glass);
   border-radius: 20px;
-  padding: 15px;
-  margin-top: 20px;
+  padding: 20px;
+  margin-top: 25px;
+  box-sizing: border-box;
 }
 #surahSelect {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border-radius: 10px;
   margin-bottom: 10px;
-  border: none;
 }
 #quranText {
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
-  margin-top: 10px;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  margin-top: 15px;
+  font-size: 1rem;
+  line-height: 1.6;
+  padding-right: 10px;
 }
-.audioControls {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
+.ayah-box {
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 10px;
 }
-.audioControls button {
-  flex: 1;
-  padding: 8px;
-  background: #FFD700;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
+.ar-text {
+  direction: rtl;
+  font-size: 1.4rem;
+  font-family: serif;
+  color: var(--gold);
+  margin-bottom: 8px;
 }
+.de-text { font-size: 0.9rem; color: #ddd; }
 
+.audioControls { display: flex; gap: 10px; margin-top: 15px; }
+.audioControls button {
+  flex: 1; padding: 10px; background: var(--gold);
+  border: none; border-radius: 10px; cursor: pointer; font-weight: bold;
+}
 </style>
 </head>
 <body>
 
 <header>
   <h1>Licht des Islam</h1>
-  <img src="path/to/logo.png" alt="Logo Licht des Islam">
 </header>
 
-<!-- Stadt-Suche -->
 <div id="searchContainer">
-  <input id="searchInput" placeholder="🔍" type="text">
-  <button id="searchBtn">🔍</button>
+  <input id="searchInput" placeholder="Stadt eingeben (z.B. Berlin)" type="text">
+  <button id="searchBtn" onclick="searchCity()">Suche</button>
 </div>
 
-<!-- Nächstes Gebet Countdown -->
-<div id="nextPrayer">Nächstes Gebet: <span id="nextPrayerName">--</span> in <span id="nextPrayerCountdown">--:--:--</span></div>
-
-<!-- Gebetszeiten Kacheln -->
-<div class="grid-container" id="prayerGrid">
-  <!-- Beispiel-Karten, werden per JS gefüllt -->
+<div id="nextPrayer">
+  <div>Nächstes Gebet: <strong id="nextPrayerName">--</strong></div>
+  <div id="nextPrayerCountdown" style="font-size: 2rem; font-weight: bold;">--:--:--</div>
 </div>
 
-<!-- Quran Bereich -->
+<div class="grid-container" id="prayerGrid"></div>
+
 <div id="quranContainer">
   <select id="surahSelect"></select>
-  <button onclick="loadSurah()">Laden</button>
-  <div id="quranText"></div>
   <div class="audioControls">
-    <button onclick="playAllAudio()">Alle Abspielen</button>
-    <button onclick="pauseAllAudio()">Pause Alle</button>
+    <button onclick="loadSurah()">📖 Laden</button>
+    <button id="playBtn" onclick="toggleAudio()">▶️ Audio</button>
   </div>
+  <div id="quranText">Wähle eine Sure aus...</div>
 </div>
+
+<audio id="mainAudio"></audio>
 
 <script>
-// --- SERVICE WORKER ---
-const CACHE_NAME = 'gebetsapp-v1';
-const assets = ['/', '/index.html'];
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js')
-  .then(()=>console.log("Service Worker aktiv"))
-  .catch(err=>console.log(err));
-}
-
-// --- GEBETSZEITEN ---
 const prayers = [
-  {name:"Fajr", arabic:"الفجر", desc:"Morgengebet", icon:"crescent-icon.png"},
-  {name:"Sunrise", arabic:"الشروق", desc:"Sonnenaufgang", icon:"sunrise-icon.png"},
-  {name:"Dhuhr", arabic:"الظهر", desc:"Mittagsgebet", icon:"sun-icon.png"},
-  {name:"Asr", arabic:"العصر", desc:"Nachmittagsgebet", icon:"afternoon-sun-icon.png"},
-  {name:"Maghrib", arabic:"المغرب", desc:"Abendgebet", icon:"maghrib-icon.png"},
-  {name:"Isha", arabic:"العشاء", desc:"Nachtgebet", icon:"isha-icon.png"}
+  {id:"Fajr", name:"Fajr", arabic:"الفجر"},
+  {id:"Sunrise", name:"Shoruq", arabic:"الشروق"},
+  {id:"Dhuhr", name:"Dhuhr", arabic:"الظهر"},
+  {id:"Asr", name:"Asr", arabic:"العصر"},
+  {id:"Maghrib", name:"Maghrib", arabic:"المغرب"},
+  {id:"Isha", name:"Isha", arabic:"العشاء"}
 ];
-let prayerTimesObj = {};
 
-// Standort und API Abruf
-function fetchPrayerTimes(lat, lon, method=3){
-  fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=${method}&higherLatitudeMethod=3`)
-    .then(res=>res.json())
-    .then(data=>{
+let prayerTimesObj = {};
+const audioPlayer = document.getElementById("mainAudio");
+
+// --- API: Gebetszeiten ---
+function fetchPrayerTimes(lat, lon) {
+  fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=3`)
+    .then(res => res.json())
+    .then(data => {
       prayerTimesObj = data.data.timings;
       renderPrayerGrid();
-      updateCountdown();
-      setInterval(updateCountdown,1000);
+      startCountdown();
     });
 }
 
-navigator.geolocation.getCurrentPosition(pos=>{
-  fetchPrayerTimes(pos.coords.latitude,pos.coords.longitude);
-});
+function searchCity() {
+  const city = document.getElementById("searchInput").value;
+  if(!city) return;
+  fetch(`https://api.aladhan.com/v1/timingsByAddress?address=${city}&method=3`)
+    .then(res => res.json())
+    .then(data => {
+      if(data.data) {
+        prayerTimesObj = data.data.timings;
+        renderPrayerGrid();
+        startCountdown();
+      }
+    }).catch(() => alert("Stadt nicht gefunden"));
+}
 
-// Countdown
-function updateCountdown(){
+function startCountdown() {
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+  if (!prayerTimesObj.Fajr) return;
   const now = new Date();
-  let nextTime = null;
-  let nextName = "";
-  prayers.forEach(p=>{
-    let t = prayerTimesObj[p.name];
-    if(!t) return;
-    let [h,m] = t.split(":");
+  let next = null;
+  let name = "";
+
+  prayers.forEach(p => {
+    const [h, m] = prayerTimesObj[p.id].split(":");
     let d = new Date();
-    d.setHours(h,m,0,0);
-    if(d>now && (!nextTime || d<nextTime)){
-      nextTime = d;
-      nextName = p.name;
+    d.setHours(h, m, 0, 0);
+    if (d > now && (!next || d < next)) {
+      next = d;
+      name = p.name;
     }
   });
-  if(!nextTime){
-    let t = prayerTimesObj["Fajr"].split(":");
-    nextTime = new Date();
-    nextTime.setDate(nextTime.getDate()+1);
-    nextTime.setHours(t[0],t[1],0,0);
-    nextName="Fajr";
+
+  if (!next) { // Falls alle Gebete heute vorbei sind -> Morgen Fajr
+    const [h, m] = prayerTimesObj.Fajr.split(":");
+    next = new Date();
+    next.setDate(next.getDate() + 1);
+    next.setHours(h, m, 0, 0);
+    name = "Fajr";
   }
-  let diff = nextTime-now;
-  let h = Math.floor(diff/1000/3600);
-  let m = Math.floor(diff/1000/60)%60;
-  let s = Math.floor(diff/1000)%60;
-  document.getElementById("nextPrayerName").innerText = nextName;
-  document.getElementById("nextPrayerCountdown").innerText =
-    `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+
+  const diff = next - now;
+  const h = Math.floor(diff / 3600000).toString().padStart(2, "0");
+  const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, "0");
+  const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, "0");
+  
+  document.getElementById("nextPrayerName").innerText = name;
+  document.getElementById("nextPrayerCountdown").innerText = `${h}:${m}:${s}`;
 }
 
-// Grid rendern
-function renderPrayerGrid(){
+function renderPrayerGrid() {
   const grid = document.getElementById("prayerGrid");
-  grid.innerHTML="";
-  prayers.forEach(p=>{
-    const t = prayerTimesObj[p.name]||"--:--";
-    const card = document.createElement("div");
-    card.className="card";
-    card.innerHTML = `<img src="path/to/${p.icon}" class="icon">
-      <div class="prayer-title">${p.name}</div>
-      <div class="arabic">${p.arabic}</div>
-      <div class="time">${t}</div>
-      <div class="description">${p.desc||""}</div>`;
-    grid.appendChild(card);
+  grid.innerHTML = "";
+  prayers.forEach(p => {
+    const t = prayerTimesObj[p.id] || "--:--";
+    grid.innerHTML += `
+      <div class="card">
+        <div class="prayer-title">${p.name}</div>
+        <div class="arabic">${p.arabic}</div>
+        <div class="time">${t}</div>
+      </div>`;
   });
 }
 
-// --- QURAN ---
+// --- API: Quran ---
 fetch("https://api.alquran.cloud/v1/surah")
-  .then(res=>res.json())
-  .then(data=>{
+  .then(res => res.json())
+  .then(data => {
     const sel = document.getElementById("surahSelect");
-    data.data.forEach(s=>{
-      const opt = document.createElement("option");
-      opt.value = s.number;
-      opt.text=`${s.number} - ${s.englishName}`;
-      sel.appendChild(opt);
+    data.data.forEach(s => {
+      sel.innerHTML += `<option value="${s.number}">${s.number}. ${s.englishName} (${s.name})</option>`;
     });
   });
 
-function loadSurah(){
+async function loadSurah() {
   const num = document.getElementById("surahSelect").value;
-  fetch(`https://api.alquran.cloud/v1/surah/${num}/de.bubenheim`)
-    .then(res=>res.json())
-    .then(data=>{
-      const text = data.data.ayahs.map(a=>`${a.numberInSurah}. ${a.text}`).join("<br><br>");
-      document.getElementById("quranText").innerHTML = text;
+  const container = document.getElementById("quranText");
+  container.innerHTML = "Wird geladen...";
+
+  try {
+    const [resAr, resDe] = await Promise.all([
+      fetch(`https://api.alquran.cloud/v1/surah/${num}`),
+      fetch(`https://api.alquran.cloud/v1/surah/${num}/de.bubenheim`)
+    ]);
+    const dataAr = await resAr.json();
+    const dataDe = await resDe.json();
+
+    let html = "";
+    dataAr.data.ayahs.forEach((ayah, index) => {
+      html += `
+        <div class="ayah-box">
+          <div class="ar-text">${ayah.text}</div>
+          <div class="de-text">${dataDe.data.ayahs[index].text}</div>
+        </div>`;
     });
-}
-
-// --- AUDIO ---
-let audios = [];
-function playAllAudio(){
-  audios.forEach(a=>a.play());
-}
-function pauseAllAudio(){
-  audios.forEach(a=>a.pause());
-}
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Licht des Islam</title>
-<style>
-/* --- GLOBAL STYLES --- */
-body {
-  font-family: 'Poppins', sans-serif;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(138, 43, 226, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, #0A0F29 0%, #1A1F39 100%);
-  color: #FFFFFF;
-  margin: 0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* --- HEADER --- */
-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  margin: 0;
-  color: #FFD700;
-}
-header img {
-  margin-top: 10px;
-  max-width: 120px;
-}
-
-/* --- SEARCH BAR --- */
-#searchContainer {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  margin-bottom: 20px;
-}
-#searchInput {
-  flex: 1;
-  padding: 10px 15px;
-  border-radius: 25px 0 0 25px;
-  border: none;
-  outline: none;
-  font-size: 16px;
-}
-#searchBtn {
-  padding: 10px;
-  background-color: #FFD700;
-  border: none;
-  border-radius: 0 25px 25px 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* --- GRID CARDS --- */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 420px;
-}
-.card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 215, 0, 0.1);
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
-  transition: transform 0.2s;
-}
-.card:hover {
-  transform: scale(1.03);
-}
-.icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 15px;
-}
-.prayer-title {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #FFD700;
-  margin-bottom: 5px;
-}
-.arabic {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.6);
-  margin-bottom: 10px;
-}
-.time {
-  font-size: 1.8rem;
-  margin-bottom: 5px;
-}
-.description {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
-}
-
-/* --- NEXT PRAYER COUNTDOWN --- */
-#nextPrayer {
-  background: linear-gradient(90deg, #22c55e, #16a34a);
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-  width: 100%;
-  max-width: 420px;
-  margin-bottom: 20px;
-  font-size: 1.2rem;
-}
-
-/* --- QURAN AREA --- */
-#quranContainer {
-  width: 100%;
-  max-width: 420px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 15px;
-  margin-top: 20px;
-}
-#surahSelect {
-  width: 100%;
-  padding: 8px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  border: none;
-}
-#quranText {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: 10px;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-.audioControls {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-.audioControls button {
-  flex: 1;
-  padding: 8px;
-  background: #FFD700;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-</style>
-</head>
-<body>
-
-<header>
-  <h1>Licht des Islam</h1>
-  <img src="path/to/logo.png" alt="Logo Licht des Islam">
-</header>
-
-<!-- Stadt-Suche -->
-<div id="searchContainer">
-  <input id="searchInput" placeholder="🔍" type="text">
-  <button id="searchBtn">🔍</button>
-</div>
-
-<!-- Nächstes Gebet Countdown -->
-<div id="nextPrayer">Nächstes Gebet: <span id="nextPrayerName">--</span> in <span id="nextPrayerCountdown">--:--:--</span></div>
-
-<!-- Gebetszeiten Kacheln -->
-<div class="grid-container" id="prayerGrid">
-  <!-- Beispiel-Karten, werden per JS gefüllt -->
-</div>
-
-<!-- Quran Bereich -->
-<div id="quranContainer">
-  <select id="surahSelect"></select>
-  <button onclick="loadSurah()">Laden</button>
-  <div id="quranText"></div>
-  <div class="audioControls">
-    <button onclick="playAllAudio()">Alle Abspielen</button>
-    <button onclick="pauseAllAudio()">Pause Alle</button>
-  </div>
-</div>
-
-<script>
-// --- SERVICE WORKER ---
-const CACHE_NAME = 'gebetsapp-v1';
-const assets = ['/', '/index.html'];
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js')
-  .then(()=>console.log("Service Worker aktiv"))
-  .catch(err=>console.log(err));
-}
-
-// --- GEBETSZEITEN ---
-const prayers = [
-  {name:"Fajr", arabic:"الفجر", desc:"Morgengebet", icon:"crescent-icon.png"},
-  {name:"Sunrise", arabic:"الشروق", desc:"Sonnenaufgang", icon:"sunrise-icon.png"},
-  {name:"Dhuhr", arabic:"الظهر", desc:"Mittagsgebet", icon:"sun-icon.png"},
-  {name:"Asr", arabic:"العصر", desc:"Nachmittagsgebet", icon:"afternoon-sun-icon.png"},
-  {name:"Maghrib", arabic:"المغرب", desc:"Abendgebet", icon:"maghrib-icon.png"},
-  {name:"Isha", arabic:"العشاء", desc:"Nachtgebet", icon:"isha-icon.png"}
-];
-let prayerTimesObj = {};
-
-// Standort und API Abruf
-function fetchPrayerTimes(lat, lon, method=3){
-  fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=${method}&higherLatitudeMethod=3`)
-    .then(res=>res.json())
-    .then(data=>{
-      prayerTimesObj = data.data.timings;
-      renderPrayerGrid();
-      updateCountdown();
-      setInterval(updateCountdown,1000);
-    });
-}
-
-navigator.geolocation.getCurrentPosition(pos=>{
-  fetchPrayerTimes(pos.coords.latitude,pos.coords.longitude);
-});
-
-// Countdown
-function updateCountdown(){
-  const now = new Date();
-  let nextTime = null;
-  let nextName = "";
-  prayers.forEach(p=>{
-    let t = prayerTimesObj[p.name];
-    if(!t) return;
-    let [h,m] = t.split(":");
-    let d = new Date();
-    d.setHours(h,m,0,0);
-    if(d>now && (!nextTime || d<nextTime)){
-      nextTime = d;
-      nextName = p.name;
-    }
-  });
-  if(!nextTime){
-    let t = prayerTimesObj["Fajr"].split(":");
-    nextTime = new Date();
-    nextTime.setDate(nextTime.getDate()+1);
-    nextTime.setHours(t[0],t[1],0,0);
-    nextName="Fajr";
+    container.innerHTML = html;
+    
+    // Audio URL setzen (Afsay Rezitator als Beispiel)
+    audioPlayer.src = `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${num}.mp3`;
+    document.getElementById("playBtn").innerText = "▶️ Audio";
+  } catch (e) {
+    container.innerHTML = "Fehler beim Laden.";
   }
-  let diff = nextTime-now;
-  let h = Math.floor(diff/1000/3600);
-  let m = Math.floor(diff/1000/60)%60;
-  let s = Math.floor(diff/1000)%60;
-  document.getElementById("nextPrayerName").innerText = nextName;
-  document.getElementById("nextPrayerCountdown").innerText =
-    `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
 }
 
-// Grid rendern
-function renderPrayerGrid(){
-  const grid = document.getElementById("prayerGrid");
-  grid.innerHTML="";
-  prayers.forEach(p=>{
-    const t = prayerTimesObj[p.name]||"--:--";
-    const card = document.createElement("div");
-    card.className="card";
-    card.innerHTML = `<img src="path/to/${p.icon}" class="icon">
-      <div class="prayer-title">${p.name}</div>
-      <div class="arabic">${p.arabic}</div>
-      <div class="time">${t}</div>
-      <div class="description">${p.desc||""}</div>`;
-    grid.appendChild(card);
-  });
+function toggleAudio() {
+  if (audioPlayer.paused) {
+    audioPlayer.play();
+    document.getElementById("playBtn").innerText = "⏸️ Pause";
+  } else {
+    audioPlayer.pause();
+    document.getElementById("playBtn").innerText = "▶️ Audio";
+  }
 }
 
-// --- QURAN ---
-fetch("https://api.alquran.cloud/v1/surah")
-  .then(res=>res.json())
-  .then(data=>{
-    const sel = document.getElementById("surahSelect");
-    data.data.forEach(s=>{
-      const opt = document.createElement("option");
-      opt.value = s.number;
-      opt.text=`${s.number} - ${s.englishName}`;
-      sel.appendChild(opt);
-    });
-  });
-
-function loadSurah(){
-  const num = document.getElementById("surahSelect").value;
-  fetch(`https://api.alquran.cloud/v1/surah/${num}/de.bubenheim`)
-    .then(res=>res.json())
-    .then(data=>{
-      const text = data.data.ayahs.map(a=>`${a.numberInSurah}. ${a.text}`).join("<br><br>");
-      document.getElementById("quranText").innerHTML = text;
-    });
-}
-
-// --- AUDIO ---
-let audios = [];
-function playAllAudio(){
-  audios.forEach(a=>a.play());
-}
-function pauseAllAudio(){
-  audios.forEach(a=>a.pause());
-}
+// Standort-Initialisierung
+navigator.geolocation.getCurrentPosition(
+  pos => fetchPrayerTimes(pos.coords.latitude, pos.coords.longitude),
+  err => fetchPrayerTimes(52.52, 13.40) // Fallback Berlin
+);
 </script>
-
 </body>
 </html>
