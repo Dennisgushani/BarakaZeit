@@ -1,36 +1,11 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-
-                
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>BarakaZeit</title>
-<!-- PWA Verknüpfungen -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#D4AF37">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<!-- Einbindung der Berechnungs-Library (wird vom SW gecached) -->
-<script src="https://cdn.jsdelivr.net/npm/adhan@4.0.9/Adhan.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-/* --- DEIN ORIGINAL DESIGN --- */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480px;margin:0 auto;overflow:hidden;position:relative}
@@ -76,7 +51,12 @@ body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480p
 .item-arabic{font-family:'Amiri',serif;font-size:.85rem;color:rgba(255,255,255,.4);margin-bottom:4px}
 .item-time{font-size:20px;font-weight:600}
 .item-desc{font-size:.65rem;color:rgba(255,255,255,.3);margin-top:2px}
-.cinfo2{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(10,11,30,0) 0%,#0a0b1e 40%);padding:24px 8px 12px;text-align:center;font-size:.68rem;color:rgba(255,255,255,.28);line-height:1.7;z-index:10;pointer-events:none}
+.cinfo2{
+  position:sticky;bottom:0;
+  background:linear-gradient(180deg,rgba(10,11,30,0) 0%,#0a0b1e 40%);
+  padding:24px 8px 12px;
+  text-align:center;font-size:.68rem;color:rgba(255,255,255,.28);line-height:1.7;z-index:10;pointer-events:none;
+}
 .cinfo2 strong{color:rgba(212,175,55,.6)}
 .cinfo2 span{pointer-events:auto}
 .qdrop{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:18px;border:1px solid rgba(212,175,55,.2);background:rgba(255,255,255,.03);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);margin-bottom:12px;cursor:pointer;user-select:none;box-shadow:0 4px 15px rgba(0,0,0,.3)}
@@ -177,26 +157,26 @@ body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480p
 <div class="content">
 <div class="page on" id="pPrayer">
   <div class="srow">
-    <input class="sinp" id="cInp" placeholder="Koordinaten eingeben (z.B. 51.43, 7.79)...">
-    <button class="bsearch" onclick="updateCoordsFromInput()"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <input class="sinp" id="cInp" placeholder="Stadt suchen, z.B. Berlin, Istanbul, Dubai...">
+    <button class="bsearch" onclick="doSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
   </div>
   <div class="meth-row">
     <span class="meth-label">Methode:</span>
     <select class="meth-sel" id="mSel" onchange="doMeth()">
-      <option value="MuslimWorldLeague" selected>Muslim World League</option>
-      <option value="ISNA">ISNA</option>
-      <option value="Egyptian">Egyptian</option>
-      <option value="UmmAlQura">Umm Al-Qura</option>
-      <option value="Karachi">Karachi</option>
-      <option value="Singapore">Singapore</option>
+      <option value="3" selected>Muslim World League (Europa)</option>
+      <option value="2">ISNA (Nordamerika)</option>
+      <option value="1">Egyptian General Authority</option>
+      <option value="4">Umm Al-Qura, Makkah</option>
+      <option value="5">University of Karachi</option>
+      <option value="12">Majlis Ugama Singapore</option>
     </select>
   </div>
   <div class="cinfo">
-    <div class="cname" id="cName">Standort wird gesucht...</div>
+    <div class="cname" id="cName">Menden (Sauerland)</div>
     <div class="date-container">
-      <span class="hijri-date" id="hijriDate">--</span>
+      <span class="hijri-date" id="hijriDate">12. Schawwal 1447</span>
       <span class="separator">|</span>
-      <span class="gregorian-date" id="gregDate">--</span>
+      <span class="gregorian-date" id="gregDate">31. März 2026</span>
     </div>
   </div>
   <div class="next-prayer-card">
@@ -206,7 +186,7 @@ body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480p
   </div>
   <div class="other-prayers-grid" id="pGrid"></div>
   <div class="cinfo2">
-    Methode: <strong id="mName">Muslim World League</strong> · Sommer-Korrektur: Angle Based (aktiv) · <span id="latD">--</span>, <span id="lonD">--</span>
+    Methode: <strong id="mName">Muslim World League</strong> · Sommer-Korrektur: Angle Based (aktiv) · <span id="latD">51.4338</span>, <span id="lonD">7.7926</span>
   </div>
 </div>
 <div class="page" id="pQuran">
@@ -258,196 +238,28 @@ body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480p
 </div>
 <audio id="aud" preload="auto"></audio>
 <script>
-// ===== OFFLINE BERECHNUNGSLOGIK (ADHAN.JS) =====
-// Fallback-Koordinaten (Menden)
-let userLat = 51.4338;
-let userLon = 7.7926;
-let prayerTimesData = {};
-
-// Initialisierung
-function initApp() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        userLat = pos.coords.latitude;
-        userLon = pos.coords.longitude;
-        document.getElementById('cName').textContent = "Lokaler Standort (GPS)";
-        calculateAndRender();
-      },
-      () => {
-        document.getElementById('cName').textContent = "Menden (Standard)";
-        calculateAndRender();
-      }
-    );
-  } else {
-    document.getElementById('cName').textContent = "Menden (Standard)";
-    calculateAndRender();
-  }
+// ===== SERVICE WORKER REGISTRATION (Inline) =====
+if('serviceWorker' in navigator){
+  const swCode = `
+    const CACHE_NAME = 'barakazeit-v1';
+    self.addEventListener('install', evt => {
+      evt.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['/'])));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', evt => {
+      evt.waitUntil(clients.claim());
+    });
+    self.addEventListener('fetch', evt => {
+      evt.respondWith(
+        caches.match(evt.request).then(rec => rec || fetch(evt.request))
+      );
+    });
+  `;
+  const blob = new Blob([swCode], {type: 'application/javascript'});
+  const blobUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(blobUrl).then(() => console.log("App ist jetzt offline-fähig!")).catch(err => console.log("SW Fehler", err));
 }
 
-function calculateAndRender() {
-  try {
-    const coordinates = new Adhan.Coordinates(userLat, userLon);
-    const params = getMethodParams();
-    
-    // Berechnung für HEUTE
-    const date = new Date();
-    const prayerTimes = new Adhan.PrayerTimes(coordinates, date, params);
-    
-    // Daten speichern
-    prayerTimesData = {
-      Fajr: prayerTimes.fajr,
-      Sunrise: prayerTimes.sunrise,
-      Dhuhr: prayerTimes.dhuhr,
-      Asr: prayerTimes.asr,
-      Maghrib: prayerTimes.maghrib,
-      Isha: prayerTimes.isha
-    };
-
-    // UI Update
-    updateDateDisplay(date);
-    renderGrid();
-    startCountdown();
-    
-    document.getElementById('latD').textContent = userLat.toFixed(4);
-    document.getElementById('lonD').textContent = userLon.toFixed(4);
-    document.getElementById('mName').textContent = document.getElementById('mSel').options[document.getElementById('mSel').selectedIndex].text;
-  } catch (e) {
-    console.error("Berechnungsfehler:", e);
-  }
-}
-
-function getMethodParams() {
-  const method = document.getElementById('mSel').value;
-  let params;
-  switch(method) {
-    case 'ISNA': params = Adhan.CalculationMethod.NorthAmerica(); break;
-    case 'Egyptian': params = Adhan.CalculationMethod.Egyptian(); break;
-    case 'UmmAlQura': params = Adhan.CalculationMethod.UmmAlQura(); break;
-    case 'Karachi': params = Adhan.CalculationMethod.Karachi(); break;
-    case 'Singapore': params = Adhan.CalculationMethod.Singapore(); break;
-    default: params = Adhan.CalculationMethod.MuslimWorldLeague();
-  }
-  params.madhab = Adhan.Madhab.Shafi;
-  return params;
-}
-
-function updateDateDisplay(date) {
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById('gregDate').textContent = date.toLocaleDateString('de-DE', options);
-  // Hijri Date (approximation)
-  const hijriDate = new Date(date).toLocaleDateString('en-u-ca-islamic-umalqura', {day: 'numeric', month: 'long', year: 'numeric'});
-  document.getElementById('hijriDate').textContent = hijriDate.replace(' AH', '');
-}
-
-function formatTime(date) {
-  return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-}
-
-// Manuelle Eingabe von Koordinaten
-function updateCoordsFromInput() {
-  const val = document.getElementById('cInp').value;
-  const parts = val.split(',');
-  if(parts.length === 2) {
-    const lat = parseFloat(parts[0]);
-    const lon = parseFloat(parts[1]);
-    if(!isNaN(lat) && !isNaN(lon)) {
-      userLat = lat;
-      userLon = lon;
-      document.getElementById('cName').textContent = "Manuelle Koordinaten";
-      calculateAndRender();
-    }
-  }
-}
-
-function doMeth() {
-  calculateAndRender();
-}
-
-// Grid rendern
-const PR = [
-  {id:'Fajr',n:'Fajr',ar:'الفجر',d:'Morgengebet'},
-  {id:'Sunrise',n:'Sonnenaufgang',ar:'الشروق',d:''},
-  {id:'Dhuhr',n:'Dhuhr',ar:'الظهر',d:'Mittagsgebet'},
-  {id:'Asr',n:'Asr',ar:'العصر',d:'Nachmittagsgebet'},
-  {id:'Maghrib',n:'Maghrib',ar:'المغرب',d:'Abendgebet'},
-  {id:'Isha',n:'Isha',ar:'العشاء',d:'Nachtgebet'}
-];
-
-const PI = {
-  Fajr:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gf1" x1="32" y1="8" x2="32" y2="56"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#FFA500"/></linearGradient></defs><path d="M32 8C36 8 40 12 40 18C40 24 36 28 32 28C28 28 24 24 24 18C24 12 28 8 32 8Z" fill="url(#gf1)"/><path d="M20 14C14 18 10 24 10 32C10 42 20 52 32 52C44 52 54 42 54 32C54 24 50 18 44 14" stroke="#d4af37" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M12 48C12 48 20 42 32 42C44 42 52 48 52 48" stroke="#4444FF" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="32" cy="18" r="3" fill="#FFF8DC"/></svg>',
-  Sunrise:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gs1" x1="32" y1="10" x2="32" y2="42"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#FF6347"/></linearGradient></defs><path d="M20 38C20 28 25 22 32 22C39 22 44 28 44 38" fill="url(#gs1)"/><line x1="32" y1="6" x2="32" y2="12" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="14" x2="22" y2="18" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="14" x2="42" y2="18" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="10" y1="28" x2="16" y2="28" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="28" x2="54" y2="28" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><rect x="8" y="42" width="48" height="4" rx="2" fill="#4444FF"/><circle cx="32" cy="30" r="3" fill="#FFF8DC"/></svg>',
-  Dhuhr:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="24" r="14" fill="#d4af37"/><line x1="32" y1="4" x2="32" y2="10" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="14" y1="12" x2="19" y2="16" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="12" x2="45" y2="16" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="24" x2="18" y2="24" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="24" x2="52" y2="24" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><path d="M12 48C12 48 20 42 32 42C44 42 52 48 52 48" stroke="#4444FF" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="32" cy="24" r="4" fill="#FFF8DC"/></svg>',
-  Asr:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="26" cy="22" r="12" fill="#d4af37"/><line x1="26" y1="4" x2="26" y2="10" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="10" x2="16" y2="14" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="10" x2="36" y2="14" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="8" y1="22" x2="14" y2="22" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><path d="M38 20C44 20 50 26 50 34C50 40 46 44 40 46L20 46C14 44 10 40 10 34C10 26 16 20 26 22" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><path d="M10 48C10 48 18 42 32 42C46 42 54 48 54 48" stroke="#4444FF" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
-  Maghrib:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gm1" x1="32" y1="10" x2="32" y2="42"><stop stop-color="#FF6347"/><stop offset="1" stop-color="#d4af37"/></linearGradient></defs><path d="M20 38C20 28 25 22 32 22C39 22 44 28 44 38" fill="url(#gm1)"/><rect x="8" y="42" width="48" height="4" rx="2" fill="#2D1B69"/><rect x="8" y="46" width="48" height="8" rx="2" fill="#1A1040"/><path d="M16 42L16 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M48 42L48 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M32 42L32 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M24 42L24 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M40 42L40 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/></svg>',
-  Isha:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gi1" x1="32" y1="8" x2="32" y2="56"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#FFA500"/></linearGradient></defs><path d="M32 8C36 8 40 12 40 18C40 24 36 28 32 28C28 28 24 24 24 18C24 12 28 8 32 8Z" fill="url(#gi1)"/><circle cx="44" cy="14" r="2" fill="#FFF8DC"/><circle cx="50" cy="24" r="1.5" fill="#FFF8DC"/><circle cx="18" cy="18" r="1.5" fill="#FFF8DC"/><circle cx="14" cy="32" r="1" fill="#FFF8DC"/><circle cx="48" cy="38" r="1.5" fill="#FFF8DC"/><circle cx="52" cy="16" r="1" fill="#FFF8DC"/><circle cx="16" cy="10" r="1" fill="#FFF8DC"/><rect x="12" y="44" width="6" height="12" rx="1" fill="#2D1B69"/><rect x="28" y="44" width="8" height="12" rx="1" fill="#2D1B69"/><rect x="46" y="44" width="6" height="12" rx="1" fill="#2D1B69"/><circle cx="15" cy="42" r="2" fill="#d4af37"/><circle cx="32" cy="42" r="2.5" fill="#d4af37"/><circle cx="49" cy="42" r="2" fill="#d4af37"/></svg>'
-};
-
-var cdTimer = null;
-var nextPrayerId = null;
-var nextPrayerTime = null;
-
-function renderGrid() {
-  var g = document.getElementById('pGrid');
-  g.innerHTML = '';
-  if(!prayerTimesData.Fajr) return;
-
-  var now = new Date();
-  nextPrayerId = null;
-  nextPrayerTime = null;
-
-  // Nächstes Gebet finden
-  for(var i=0;i<PR.length;i++){
-    var p = PR[i];
-    var pTime = prayerTimesData[p.id];
-    if(pTime) {
-      if(pTime > now && (!nextPrayerTime || pTime < nextPrayerTime)) {
-        nextPrayerTime = pTime;
-        nextPrayerId = p.id;
-      }
-    }
-  }
-  // Falls alle vorbei, nächstes ist morgen Fajr
-  if(!nextPrayerId) nextPrayerId = 'Fajr';
-
-  for(var j=0;j<PR.length;j++){
-    var p = PR[j];
-    var t = formatTime(prayerTimesData[p.id]);
-    var isActive = (p.id === nextPrayerId);
-    var isPassed = (prayerTimesData[p.id] < now);
-    
-    var cls = 'prayer-item' + (isPassed ? ' passed' : '') + (isActive ? ' active' : '');
-    
-    g.innerHTML += '<div class="'+cls+'"><div class="prayer-icon-wrap">'+PI[p.id]+'</div><span class="item-name">'+p.n+'</span><span class="item-arabic">'+p.ar+'</span><span class="item-time">'+t+'</span><span class="item-desc">'+p.d+'</span></div>';
-  }
-}
-
-function startCountdown() {
-  if(cdTimer) clearInterval(cdTimer);
-  updateCountdown();
-  cdTimer = setInterval(updateCountdown, 1000);
-}
-
-function updateCountdown() {
-  if(!nextPrayerTime || !prayerTimesData.Fajr) return;
-  var now = new Date();
-  var diff = nextPrayerTime - now;
-  
-  // Falls Zeit überschritten, neu berechnen
-  if(diff < 0) {
-    renderGrid(); // Sucht das nächste Gebet neu
-    return;
-  }
-
-  var hh = Math.floor(diff / 3600000);
-  var mm = Math.floor((diff % 3600000) / 60000);
-  var ss = Math.floor((diff % 60000) / 1000);
-  
-  document.getElementById('nName').textContent = PR.find(p=>p.id===nextPrayerId).n;
-  document.getElementById('nCd').textContent = (hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
-}
-
-// ===== QURAN LOGIK (Offline Cache via IndexedDB) =====
 var DB_NAME='BarakaZeitQuran';var DB_VER=1;var STORE='surahs';
 var dbReady=false;var db=null;
 function openDB(){return new Promise(function(resolve,reject){var req=indexedDB.open(DB_NAME,DB_VER);req.onupgradeneeded=function(e){var d=e.target.result;if(!d.objectStoreNames.contains(STORE)){d.createObjectStore(STORE,{keyPath:'num'});}};req.onsuccess=function(e){db=e.target.result;dbReady=true;resolve(db);};req.onerror=function(e){dbReady=false;resolve(null);};});}
@@ -496,6 +308,23 @@ var SM=[
 ];
 var HM=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Dschumada al-Ula','Dschumada al-Achira','Radschab','Schaban','Ramadan','Schawwal','Dhu al-Qida','Dhu al-Hidschda'];
 var GM=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+var PI={
+Fajr:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gf1" x1="32" y1="8" x2="32" y2="56"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#FFA500"/></linearGradient></defs><path d="M32 8C36 8 40 12 40 18C40 24 36 28 32 28C28 28 24 24 24 18C24 12 28 8 32 8Z" fill="url(#gf1)"/><path d="M20 14C14 18 10 24 10 32C10 42 20 52 32 52C44 52 54 42 54 32C54 24 50 18 44 14" stroke="#d4af37" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M12 48C12 48 20 42 32 42C44 42 52 48 52 48" stroke="#4444FF" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="32" cy="18" r="3" fill="#FFF8DC"/></svg>',
+Sunrise:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gs1" x1="32" y1="10" x2="32" y2="42"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#FF6347"/></linearGradient></defs><path d="M20 38C20 28 25 22 32 22C39 22 44 28 44 38" fill="url(#gs1)"/><line x1="32" y1="6" x2="32" y2="12" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="14" x2="22" y2="18" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="14" x2="42" y2="18" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="10" y1="28" x2="16" y2="28" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="28" x2="54" y2="28" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><rect x="8" y="42" width="48" height="4" rx="2" fill="#4444FF"/><circle cx="32" cy="30" r="3" fill="#FFF8DC"/></svg>',
+Dhuhr:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="24" r="14" fill="#d4af37"/><line x1="32" y1="4" x2="32" y2="10" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="14" y1="12" x2="19" y2="16" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="12" x2="45" y2="16" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="24" x2="18" y2="24" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="24" x2="52" y2="24" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><path d="M12 48C12 48 20 42 32 42C44 42 52 48 52 48" stroke="#4444FF" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="32" cy="24" r="4" fill="#FFF8DC"/></svg>',
+Asr:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="26" cy="22" r="12" fill="#d4af37"/><line x1="26" y1="4" x2="26" y2="10" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="10" x2="16" y2="14" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="10" x2="36" y2="14" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><line x1="8" y1="22" x2="14" y2="22" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/><path d="M38 20C44 20 50 26 50 34C50 40 46 44 40 46L20 46C14 44 10 40 10 34C10 26 16 20 26 22" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><path d="M10 48C10 48 18 42 32 42C46 42 54 48 54 48" stroke="#4444FF" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+Maghrib:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gm1" x1="32" y1="10" x2="32" y2="42"><stop stop-color="#FF6347"/><stop offset="1" stop-color="#d4af37"/></linearGradient></defs><path d="M20 38C20 28 25 22 32 22C39 22 44 28 44 38" fill="url(#gm1)"/><rect x="8" y="42" width="48" height="4" rx="2" fill="#2D1B69"/><rect x="8" y="46" width="48" height="8" rx="2" fill="#1A1040"/><path d="M16 42L16 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M48 42L48 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M32 42L32 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M24 42L24 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/><path d="M40 42L40 38" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/></svg>',
+Isha:'<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gi1" x1="32" y1="8" x2="32" y2="56"><stop stop-color="#d4af37"/><stop offset="1" stop-color="#FFA500"/></linearGradient></defs><path d="M32 8C36 8 40 12 40 18C40 24 36 28 32 28C28 28 24 24 24 18C24 12 28 8 32 8Z" fill="url(#gi1)"/><circle cx="44" cy="14" r="2" fill="#FFF8DC"/><circle cx="50" cy="24" r="1.5" fill="#FFF8DC"/><circle cx="18" cy="18" r="1.5" fill="#FFF8DC"/><circle cx="14" cy="32" r="1" fill="#FFF8DC"/><circle cx="48" cy="38" r="1.5" fill="#FFF8DC"/><circle cx="52" cy="16" r="1" fill="#FFF8DC"/><circle cx="16" cy="10" r="1" fill="#FFF8DC"/><rect x="12" y="44" width="6" height="12" rx="1" fill="#2D1B69"/><rect x="28" y="44" width="8" height="12" rx="1" fill="#2D1B69"/><rect x="46" y="44" width="6" height="12" rx="1" fill="#2D1B69"/><circle cx="15" cy="42" r="2" fill="#d4af37"/><circle cx="32" cy="42" r="2.5" fill="#d4af37"/><circle cx="49" cy="42" r="2" fill="#d4af37"/></svg>'
+};
+var PR=[
+  {id:'Fajr',n:'Fajr',ar:'الفجر',d:'Morgengebet',i:'Fajr'},
+  {id:'Sunrise',n:'Sonnenaufgang',ar:'الشروق',d:'',i:'Sunrise'},
+  {id:'Dhuhr',n:'Dhuhr',ar:'الظهر',d:'Mittagsgebet',i:'Dhuhr'},
+  {id:'Asr',n:'Asr',ar:'العصر',d:'Nachmittagsgebet',i:'Asr'},
+  {id:'Maghrib',n:'Maghrib',ar:'المغرب',d:'Abendgebet',i:'Maghrib'},
+  {id:'Isha',n:'Isha',ar:'العشاء',d:'Nachtgebet',i:'Isha'}
+];
+var QN={'ar.alafasy':'Mishary Alafasy','ar.abdulbasitmurattal':'Abdul Basit (Murattal)','ar.abdurrahmaansudais':'Abdurrahman As-Sudais','ar.saadalmughamis':'Saad Al-Mughamisi','ar.abdullahbasfar':'Abdullah Basfar','ar.husary':'Al-Husary','ar.husarymuallim':'Al-Husary (Muallim)','ar.minshawi':'El-Minshawi','ar.minshawimujawwad':'El-Minshawi (Mujawwad)','ar.muhammadayyoub':'Muhammad Ayyoub','ar.muhammadjibreel':'Muhammad Jibreel','ar.muhammadtablawi':'Muhammad Al-Tablawi'};
 var pT={},cLa=51.4338,cLo=7.7926,cS=1,surahs=[];
 var aud=document.getElementById('aud');
 var playing=false,playMode='none',curAyahIdx=-1,surahDataAr=null,surahDataDe=null;
@@ -515,26 +344,91 @@ function qtGo(t){
   else{document.getElementById('qtBm').classList.add('on');showBm();}
 }
 function qDropTog(){document.getElementById('qDrop').classList.toggle('open');}
+function fP(la,lo,m){
+  var me=m||document.getElementById('mSel').value;
+  fetch('https://api.aladhan.com/v1/timings?latitude='+la+'&longitude='+lo+'&method='+me+'&higherLatitudeMethod=3')
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.code===200&&d.data){
+      pT=d.data.timings;var mt=d.data.meta;
+      cLa=parseFloat(mt.latitude).toFixed(4);cLo=parseFloat(mt.longitude).toFixed(4);
+      document.getElementById('latD').textContent=cLa;document.getElementById('lonD').textContent=cLo;
+      document.getElementById('mName').textContent=document.getElementById('mSel').selectedOptions[0].text.replace(/🔧|Methode:/g,'').trim().split('(')[0].trim();
+      renderGrid();startCountdown();updateDates(d.data.date);
+    }
+  }).catch(function(){});
+}
 function renderGrid(){
   var g=document.getElementById('pGrid');if(!g)return;g.innerHTML='';
-  if(!prayerTimesData.Fajr){g.innerHTML='<div class="ld" style="grid-column:1/-1"><div class="sp"></div>Lade Gebetszeiten...</div>';return;}
+  if(!pT||Object.keys(pT).length===0){g.innerHTML='<div class="ld" style="grid-column:1/-1"><div class="sp"></div>Lade Gebetszeiten...</div>';return;}
   var now=new Date();
   var nextPrayerId=null,nextPrayerTime=null;
   for(var i=0;i<PR.length;i++){
-    var p=PR[i];var tStr=prayerTimesData[p.id];if(!tStr)continue;
-    var d=new Date(now);
-    if(tStr>now&&(!nextPrayerTime||tStr<nextPrayerTime)){nextPrayerTime=tStr;nextPrayerId=p.id;}
+    var p=PR[i];var tStr=pT[p.id];if(!tStr)continue;
+    var parts=tStr.split(' ')[0].split(':');var h=parseInt(parts[0],10);var m=parseInt(parts[1],10);
+    if(isNaN(h)||isNaN(m))continue;
+    var d=new Date(now);d.setHours(h,m,0,0);
+    if(d>now&&(!nextPrayerTime||d<nextPrayerTime)){nextPrayerTime=d;nextPrayerId=p.id;}
   }
   if(!nextPrayerId)nextPrayerId=PR[0].id;
   for(var j=0;j<PR.length;j++){
-    var p=PR[j];var t=formatTime(prayerTimesData[p.id]);
+    var p=PR[j];var t=(pT[p.id]||'--:--').split(' ')[0];
     var isPassed=false,isActive=(p.id===nextPrayerId);
-    if(!isActive){if(prayerTimesData[p.id]<now)isPassed=true;}
+    if(!isActive){
+      var pParts=(pT[p.id]||'').split(' ')[0].split(':');
+      var ph=parseInt(pParts[0],10),pm=parseInt(pParts[1],10);
+      if(!isNaN(ph)&&!isNaN(pm)){var pd=new Date(now);pd.setHours(ph,pm,0,0);if(pd<now)isPassed=true;}
+    }
     var cls='prayer-item'+(isPassed?' passed':'')+(isActive?' active':'');
-    g.innerHTML+='<div class="'+cls+'"><div class="prayer-icon-wrap">'+PI[p.id]+'</div><span class="item-name">'+p.n+'</span><span class="item-arabic">'+p.ar+'</span><span class="item-time">'+t+'</span><span class="item-desc">'+p.d+'</span></div>';
+    g.innerHTML+='<div class="'+cls+'"><div class="prayer-icon-wrap">'+PI[p.i]+'</div><span class="item-name">'+p.n+'</span><span class="item-arabic">'+p.ar+'</span><span class="item-time">'+t+'</span><span class="item-desc">'+p.d+'</span></div>';
   }
 }
-function doMeth(){calculateAndRender();}
+function startCountdown(){if(cdTimer)clearInterval(cdTimer);updateCountdown();cdTimer=setInterval(updateCountdown,1000);}
+function updateCountdown(){
+  if(!pT||!pT.Fajr){document.getElementById('nName').textContent='—';document.getElementById('nCd').textContent='--:--:--';return;}
+  var now=new Date();var np=null,nt=null;
+  for(var i=0;i<PR.length;i++){
+    var p=PR[i];var tStr=pT[p.id];if(!tStr)continue;
+    var parts=tStr.split(' ')[0].split(':');var h=parseInt(parts[0],10);var m=parseInt(parts[1],10);
+    if(isNaN(h)||isNaN(m))continue;
+    var d=new Date(now);d.setHours(h,m,0,0);
+    if(d>now&&(!nt||d<nt)){nt=d;np=p;}
+  }
+  if(!np){var fj=pT.Fajr.split(' ')[0].split(':');nt=new Date(now);nt.setDate(nt.getDate()+1);nt.setHours(parseInt(fj[0],10),parseInt(fj[1],10),0,0);np=PR[0];}
+  if(!nt)return;
+  var diff=nt-now;if(diff<0)diff=0;
+  var hh=Math.floor(diff/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
+  document.getElementById('nName').textContent=np.n;
+  document.getElementById('nCd').textContent='noch '+(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
+}
+function updateDates(dd){
+  if(!dd)return;
+  if(dd.gregorian){var g=dd.gregorian;document.getElementById('gregDate').textContent=parseInt(g.day,10)+'. '+GM[parseInt(g.month.number,10)-1]+' '+g.year;}
+  if(dd.hijri){var h=dd.hijri;document.getElementById('hijriDate').textContent=parseInt(h.day,10)+'. '+HM[parseInt(h.month.number,10)-1]+' '+h.year;}
+}
+function doSearch(){
+  var city=document.getElementById('cInp').value.trim();if(!city)return;
+  document.getElementById('cName').textContent=city;
+  var me=document.getElementById('mSel').value;
+  fetch('https://api.aladhan.com/v1/timingsByAddress?address='+encodeURIComponent(city)+'&method='+me)
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.code===200&&d.data){
+      pT=d.data.timings;var lc=d.data.location;
+      cLa=lc.latitude||cLa;cLo=lc.longitude||cLo;
+      document.getElementById('latD').textContent=parseFloat(cLa).toFixed(4);document.getElementById('lonD').textContent=parseFloat(cLo).toFixed(4);
+      document.getElementById('cName').textContent=lc.city||lc.country||city;
+      document.getElementById('mName').textContent=document.getElementById('mSel').selectedOptions[0].text.replace(/🔧|Methode:/g,'').trim().split('(')[0].trim();
+      renderGrid();startCountdown();updateDates(d.data.date);
+    }
+  }).catch(function(){
+    fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(city)+'&count=1')
+    .then(function(r){return r.json();})
+    .then(function(g){if(g.results&&g.results.length>0){var r=g.results[0];document.getElementById('cName').textContent=r.name;fP(r.latitude,r.longitude);}});
+  });
+}
+function doMeth(){fP(cLa,cLo,document.getElementById('mSel').value);}
+document.getElementById('cInp').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
 function ldSL(){
   surahs=SM.map(function(s){return {number:s.n,englishName:s.e,englishNameTranslation:'',numberOfAyahs:s.v,name:'سورة '+s.a};});
   renderSL(surahs);
@@ -620,72 +514,8 @@ function toggleBm(surahNum,ayahNum,btn){
   else{var ar='',de='';if(surahDataAr&&surahDataDe){var x=surahDataDe.findIndex(function(a){return a.numberInSurah===ayahNum;});if(x>-1){ar=surahDataAr[x].text;de=surahDataDe[x].text;}}
   bookmarks.push({s:surahNum,a:ayahNum,ar:ar,de:de});btn.textContent='★';btn.classList.add('bookmarked');}saveBM();
 }
-
-// Service Worker Registration
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(() => console.log("App ist offline-fähig!"));
-}
-
-// Start
-openDB().then(function(){initApp();});
+openDB().then(function(){fP(51.4338,7.7926,3);});
 </script>
 </body>
 </html>
 
-
-
-              <script>
-                              const CACHE_NAME = 'barakazeit-v1';
-
-// Hier listen wir alles auf, was offline verfügbar sein soll
-const urlsToCache = [
-  './index.html',
-  'https://cdn.jsdelivr.net/npm/adhan@4.0.9/Adhan.min.js', // WICHTIG: Library cachen
-  'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap'
-];
-
-// 1. Installation: Dateien speichern
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Cache geöffnet');
-        return cache.addAll(urlsToCache);
-      })
-  );
-  self.skipWaiting();
-});
-
-// 2. Aktivierung: Alten Cache aufräumen
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.filter(cacheName => cacheName !== CACHE_NAME)
-                  .map(cacheName => caches.delete(cacheName))
-      );
-    })
-  );
-  return self.clients.claim();
-});
-
-// 3. Abruf: Erst Cache prüfen, dann Netzwerk
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Wenn im Cache, zurückgeben
-        if (response) {
-          return response;
-        }
-        // Sonst vom Netzwerk holen
-        return fetch(event.request);
-      })
-  );
-});
-
-
-              </script>
-                        </body>
-                        </html>
-                    
