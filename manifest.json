@@ -1,0 +1,16 @@
+{
+  "name": "Gebetszeiten App",
+  "short_name": "Gebet",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#006400",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
