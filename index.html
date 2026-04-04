@@ -153,6 +153,14 @@ body{background:#0a0b1e;color:#fff;font-family:'Inter',sans-serif;max-width:480p
 .qari-error{font-size:.72rem;color:rgba(220,50,50,.8);margin-top:4px;display:none;background:rgba(220,50,50,.08);padding:6px 10px;border-radius:8px}
 .offline-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;background:rgba(212,175,55,.15);color:#d4af37;font-size:.7rem;font-weight:600;margin-bottom:10px}
 @media(max-width:380px){.next-name{font-size:32px}.next-countdown{font-size:18px}.item-time{font-size:18px}.cname{font-size:1.4rem}.aar{font-size:1.25rem}.hijri-date{font-size:1rem}}
+/* Der goldene Scheinwerfer für den aktiven Vers */
+.acard.active-ayah {
+    background: rgba(212, 175, 55, 0.15) !important;
+    border-right: 4px solid #d4af37 !important;
+    transform: scale(1.01);
+    transition: all 0.4s ease-in-out;
+}
+
 </style>
 </head>
 <body>
@@ -526,6 +534,25 @@ function toggleBm(surahNum,ayahNum,btn){
   bookmarks.push({s:surahNum,a:ayahNum,ar:ar,de:de});btn.textContent='★';btn.classList.add('bookmarked');}saveBM();
 }
 openDB().then(function(){fP(51.4338,7.7926,3);});
+// Funktion: Vers gold markieren
+function updateHighlight(idx) {
+    // Altes Gold entfernen
+    document.querySelectorAll('.acard').forEach(el => el.classList.remove('active-ayah'));
+    // Neuen Vers finden und markieren
+    const current = document.querySelector(`.acard[data-idx="${idx}"]`);
+    if (current) {
+        current.classList.add('active-ayah');
+        current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// Den Audio-Player "aud" überwachen
+if (typeof aud !== 'undefined') {
+    aud.addEventListener('play', () => {
+        if (typeof curAyahIdx !== 'undefined') updateHighlight(curAyahIdx);
+    });
+}
+
 </script>
 </body>
 </html>
